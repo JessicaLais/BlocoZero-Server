@@ -4,7 +4,7 @@ const works = [{
     title: "Prédio Beira Rio - São Paulo",
     location: "São Paulo - SP",
     employees:45,
-    budget: 1500000,
+    budget: "2M",
     startDate: "2025-01-15",
     endDate: "2026-01-15",
     progress: "25%",
@@ -18,7 +18,7 @@ const works = [{
     title: "Residencial Jardim das Flores",
     location: "Rio de Janeiro - RJ",
     employees:30,
-    budget: 800000,
+    budget: "1M",
     startDate: "2024-06-01",
     endDate: "2025-06-01",
     progress: "50%",
@@ -28,13 +28,16 @@ const works = [{
 }];
 
 
-const responseFiltered = works.map(({id, title, enterprise, photoUrl, startDate, endDate}) => ({
+const responseFiltered = works.map(({id, title, enterprise, photoUrl, startDate, endDate, budget, employees, progress}) => ({
         id,
         title,
         enterprise,
         photoUrl, 
         startDate,
-        endDate 
+        endDate,
+        budget,
+        employees,
+        progress,
 })) 
 
 const worksById = works.reduce((acc, work) => {
@@ -60,5 +63,3 @@ export const getSpecificWork = (req, res) => {
     //console.timeEnd("getWork");
 
 }
-
-
