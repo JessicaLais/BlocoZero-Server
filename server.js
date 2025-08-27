@@ -1,5 +1,5 @@
 import express from "express";
-import loginRouter from "./src/routes/loginRouter.js";
+import userController from "./src/routes/userRouter.js";
 import workRouter from "./src/routes/workRouter.js";
 import cors from "cors";
 
@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
 });
 
 // Usando as rotas de login
-app.use("/login", loginRouter);
+app.use("/user", userController);
 app.use("/work", workRouter);
 
 app.listen(port, () => {
