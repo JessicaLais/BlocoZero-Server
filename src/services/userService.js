@@ -1,4 +1,4 @@
-import * as usersModel from "../models/usersModel.js"
+import * as userModel from "../models/usersModel.js"
 import bcrypt from "bcrypt"
 
 // SERVICE CREATE USER
@@ -9,7 +9,7 @@ export const createUser = async (data) =>{
     }
 
 
-    const emailExisting = await usersModel.findUserByEmail({ email: data.email })
+    const emailExisting = await userModel.findUserByEmail({ email: data.email })
     
     if (emailExisting){
         throw new Error ("Email already registered")
@@ -17,20 +17,20 @@ export const createUser = async (data) =>{
 
     const password  = data.password
     const hashPassword = await bcrypt.hash(password, 10);
-    return await (usersModel.createUser({ name: data.name, email: data.email, password:hashPassword, enterprise_id: data.enterprise_id, position: data.position, phone:data.phone }));
+    return await (userModel.createUser({ name: data.name, email: data.email, password:hashPassword, enterprise_id: data.enterprise_id, position: data.position, phone:data.phone }));
     
 }
 
 //SERVICE LIST USERS
 export const listAllUser = async () =>{
-    const users = await usersModel.allUsers() 
+    const users = await userModel.allUsers() 
 
     return users
 }
 
 //SERVICE LOGIN USER
 export const loginUser = async ({email, password}) => {
-    const user = await usersModel.findUserByEmail({email});
+    const user = await userModel.findUserByEmail({email});
 
     if(!user){
         throw new Error ("User not found")

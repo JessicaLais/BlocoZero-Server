@@ -1,4 +1,3 @@
-//import bcrypt from "bcrypt";
 import * as userService from "../services/userService.js"
 
 
@@ -7,7 +6,7 @@ export const createUser = async (req, res) => {
   try{ 
   const data = req.body
 
-const createUser = await userService.createUser(data)
+  const createUser = await userService.createUser(data)
   res.status(200).json(createUser)
   }catch(error){
     res.status(400).json({error: error.message})

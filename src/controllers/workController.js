@@ -1,17 +1,31 @@
 import * as workServices from '../services/workServices.js';
 
-export const getWorks = (req, res) => {
-    const works = workServices.getAllWorks();
+export const createWork = async (req, res) => {
+    try{
+        const data = req.body
+        const createWork = await workServices.createWork(data)
+        res.status(200).json({response:"Sucess"})
+    } catch (error){
+        res.status(400).json({error:error.message})
+    }
+}
+
+
+export const getAllWorks = async (req, res) => {
+    const works = await (workServices.getAllWorks())
     res.status(200).json(works);
 };
 
-export const getSpecificWork = (req, res) => {
-    const workID = Number(req.params.id);
-    const work = workServices.getWorkById(workID);
+export const getSpecificWork = async (req, res) => {
+    try{
+        const id = Number(req.params.id);
 
-    if (work) {
-        res.status(200).json(work);
-    } else {
-        res.status(404).json({ message: "Work not found" });
+        const getSpecificWork = await (workServices.getSpecificWork({id}))
+
+        res.status(200).json(getSpecificWork);
+    }catch (error){
+        res.status(400).json({error:error.message})
     }
+   
+    
 };
