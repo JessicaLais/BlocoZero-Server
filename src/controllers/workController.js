@@ -18,7 +18,9 @@ export const getAllWorks = async (req, res) => {
 
 export const getSpecificWork = async (req, res) => {
     try{
-        const id = Number(req.params.id);
+        const id = req.params.id
+        
+
 
         const getSpecificWork = await (workServices.getSpecificWork({id}))
 

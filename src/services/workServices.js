@@ -31,13 +31,18 @@ export const getAllWorks = async () => {
 };
 }
 
-export const getSpecificWork = async ({id}) => {
-    const getSpecificWork = await (workModel.getSpecificWork({id}));
+export const getSpecificWork = async ({ id }) => {
+  const idFormatted = Number(id);
 
-    if(!getSpecificWork){
-        throw new Error ("No work found with this id")
-       
-    }
-    return (getSpecificWork)
-    
-}
+  if (isNaN(idFormatted)){
+    throw new Error("Invalid ID: please provide a numeric value");
+  }
+
+  const getSpecificWork = await workModel.getSpecificWork({ id: idFormatted });
+
+  if (!getSpecificWork) {
+    throw new Error("No work found with this id");
+  }
+
+  return getSpecificWork;
+};

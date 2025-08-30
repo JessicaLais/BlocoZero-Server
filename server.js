@@ -2,6 +2,7 @@ import express from "express";
 import userController from "./src/routes/userRouter.js";
 import workRouter from "./src/routes/workRouter.js";
 import cors from "cors";
+import * as middlewares from "./src/middlewares/verifyMiddlewares.js"
 
 const app = express();
 const port = 8080;
@@ -18,6 +19,12 @@ app.get("/", (req, res) => {
 // Usando as rotas de login
 app.use("/user", userController);
 app.use("/work", workRouter);
+
+
+//middlewares
+app.use(middlewares.verifyRoutes)
+
+
 
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
