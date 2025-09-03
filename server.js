@@ -1,6 +1,8 @@
 import express from "express";
 import userController from "./src/routes/userRouter.js";
 import workRouter from "./src/routes/workRouter.js";
+import itemsRouter from "./src/routes/itemsRouter.js"
+import usagesRouter from "./src/routes/usagesRouter.js"
 import cors from "cors";
 import * as middlewares from "./src/middlewares/verifyMiddlewares.js"
 
@@ -19,7 +21,8 @@ app.get("/", (req, res) => {
 // Usando as rotas de login
 app.use("/user", userController);
 app.use("/work", workRouter);
-
+app.use("/items", itemsRouter);
+app.use("/usages", usagesRouter);
 
 //middlewares
 app.use(middlewares.verifyRoutes)

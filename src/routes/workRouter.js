@@ -10,7 +10,7 @@ router.get("/list", workController.getAllWorks);
 
 
 /* 
-#CORPO DA REQUISIÇÃO: CREATE WORK
+#CORPO DA REQUISIÇÃO: REGISTER WORK
 {
     "enterprise_id":1,
     "enterprise_name":"Espindola Empreendimentos",

@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -14,35 +11,36 @@ datasource db {
 model Enterprise {
   id        Int      @id @default(autoincrement())
   name      String
-  cnpj      String?   @unique       // opcional, documento fiscal
-  address   String?                 // endereço da empresa
-  phone     String?                 // telefone de contato
-  email     String?                 // e-mail de contato
-  createdAt DateTime @default(now())  // data de criação
-  updatedAt DateTime @updatedAt       // última atualização
+  cnpj      String?  @unique
+  address   String?
+  phone     String?
+  email     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  users     User[]                  // relação 1:N com usuários
-  works     Work[]                  // relação 1:N com trabalhos
+  users User[]
+  works Work[]
+  items Item[] // 👈 adiciona relação oposta
 }
 
-
 model User {
-  id            Int       @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   enterprise_id Int
   position      String
   name          String
-  email         String    @unique
+  email         String   @unique
   password      String
   phone         String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  enterprise    Enterprise @relation(fields: [enterprise_id], references: [id])
-  works         Work[]      @relation("UserWorks") // nome da relação
+  enterprise Enterprise @relation(fields: [enterprise_id], references: [id])
+  works      Work[]     @relation("UserWorks")
+  usages     Usage[] // 👈 adiciona relação oposta
 }
 
 model Work {
-  id              Int       @id @default(autoincrement())
+  id              Int      @id @default(autoincrement())
   enterprise_id   Int
   enterprise_name String
   title           String
@@ -58,6 +56,44 @@ model Work {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  enterprise      Enterprise @relation(fields: [enterprise_id], references: [id])
-  users           User[]     @relation("UserWorks") // lado oposto da relação
+  enterprise Enterprise @relation(fields: [enterprise_id], references: [id])
+  users      User[]     @relation("UserWorks")
+  items      Item[] // 👈 adiciona relação oposta
+  usages     Usage[] // 👈 adiciona relação oposta
 }
+
+model Item {
+  id            Int      @id @default(autoincrement())
+  enterprise_id Int
+  work_id       Int
+  code          String   @unique  // código único do material/equipament
+  name          String            // nome do item
+  type          String           // "material" | "equipamento" | "EPI"
+  quantity      Int             // quantidade disponível em estoque
+  unit          String?         // unidade de medida (ex: kg, m², unidade)
+  lote          String?         // lote do material/EPI
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  enterprise Enterprise @relation(fields: [enterprise_id], references: [id])
+  work       Work       @relation(fields: [work_id], references: [id])
+  usages     Usage[]
+}
+
+
+model Usage {
+  id          Int      @id @default(autoincrement())
+  itemId      Int      // Código do equipamento/material (FK para Item)
+  quantity    Int      // Quantidade usada
+  userId      Int      // Funcionário responsável
+  workId      Int      // Obra vinculada
+  lote        String   // Lote do material/EPI
+  usedAt      DateTime // Data de uso
+  purpose     String   // Finalidade de uso
+  createdAt   DateTime @default(now())
+
+  item Item   @relation(fields: [itemId], references: [id])
+  user User   @relation(fields: [userId], references: [id])
+  work Work   @relation(fields: [workId], references: [id])
+}
+
