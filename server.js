@@ -3,6 +3,7 @@ import userController from "./src/routes/userRouter.js";
 import workRouter from "./src/routes/workRouter.js";
 import itemsRouter from "./src/routes/itemsRouter.js"
 import usagesRouter from "./src/routes/usagesRouter.js"
+import scheduleRouter from "./src/routes/scheduleRouter.js";
 import cors from "cors";
 import * as middlewares from "./src/middlewares/verifyMiddlewares.js"
 
@@ -23,6 +24,7 @@ app.use("/user", userController);
 app.use("/work", workRouter);
 app.use("/items", itemsRouter);
 app.use("/usages", usagesRouter);
+app.use("/schedule", scheduleRouter); 
 
 //middlewares
 app.use(middlewares.verifyRoutes)
