@@ -7,7 +7,7 @@ export const createUser = async (req, res) => {
   const data = req.body
 
   const createUser = await userService.createUser(data)
-  res.status(200).json(createUser)
+  res.status(200).json({response:"sucess"})
   }catch(error){
     res.status(400).json({error: error.message})
   }
@@ -18,9 +18,6 @@ export const createUser = async (req, res) => {
 export const getAllUsers = async  (req, res) => {
   const users = await userService.listAllUser()
 
-  if (!users){
-    res.status(400).json({message:"No users"})
-  }
   res.json(users);
 };
 

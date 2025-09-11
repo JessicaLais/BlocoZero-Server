@@ -4,7 +4,7 @@ export const createWork = async (req, res) => {
     try{
         const data = req.body
         const createWork = await workServices.createWork(data)
-        res.status(200).json({createWork})
+        res.status(200).json({response:"sucess"})
     } catch (error){
         res.status(400).json({error:error.message})
     }

@@ -1,16 +1,16 @@
 import prisma from "./connectionModel.js"
 
-export const createWork = async (data, startDate, endDate) => {
+export const createWork = async (data) => {
     return await prisma.work.create({
         data: {
             enterprise_id: data.enterprise_id,
-            enterprise_name: data.enterprise_name,
+            enterprise_name: data.enterprise,
             title: data.title,
             location: data.location,
             employees: data.employees,
             budget: data.budget,
-            start_date: startDate,
-            end_date: endDate,
+            start_date: data.startDate,
+            end_date: data.endDate,
             progress: data.progress,
             description: data.description,
             status: data.status,

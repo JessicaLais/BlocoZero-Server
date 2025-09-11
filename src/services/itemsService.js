@@ -1,12 +1,15 @@
+//MODELS
 import * as itemsModel from "../models/itemsModel.js"
 import {getSpecificWork} from "../models/worksModel.js"
 
 
+//POO
+import Item from "../entitys/itemEntity.js"
+
 export const createItems = async ({data}) => {
-    if ( !data.work_id || !data.code || !data.name || !data.type || !data.quantity || !data.unit || !data.lote ){
-        throw new Error ("Missing required fields")
-    }
-    return await itemsModel.createItems({data})
+    const item = new Item(data)
+    
+    return await itemsModel.createItems({data:item})
 }
 
 
@@ -24,5 +27,5 @@ export const listAllItemsByWorkId = async ({workId}) => {
     
 
     
-    return itemsByWorkId
+    return itemsByWorkId.map(item => new Item(item))
 }

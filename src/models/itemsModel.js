@@ -2,9 +2,10 @@ import prisma from "./connectionModel.js"
 
 
 export const createItems = async ({data}) => {
+    console.log(data)
     return await prisma.item.create({
         data: {
-            enterprise_id: data.enterprise_id,
+            enterprise_id: 0,
             work_id: data.work_id,
             code: data.code,
             name: data.name, 

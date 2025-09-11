@@ -10,9 +10,16 @@ export const findUserByEmail = async ({email}) =>{
 }
 
 
-export const createUser = async ({name, email, password, enterprise_id, position, phone}) => {
+export const createUser = async ({data}) => {
   return await prisma.user.create({
-   data: {name, email, password, enterprise_id, position, phone}
+   data: {
+    name: data.name,
+    email: data.email,
+    password: data.password, 
+    enterprise_id: data.enterprise_id, 
+    position:data.position, 
+    phone: data.phone
+  }
   });
 };
 

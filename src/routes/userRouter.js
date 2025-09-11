@@ -30,6 +30,8 @@ router.post("/register", verifyBody, userController.createUser)
 }
 */
 
+
+
 //Login User
 router.post("/login", verifyBody, userController.login);
 

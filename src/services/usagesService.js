@@ -1,24 +1,37 @@
+//MODEL'S
 import * as usagesModel from "../models/usagesModel.js"
 import {getSpecificWork} from "../models/worksModel.js"
 import {verifyQuantityByItemId, updateQuantityItem} from "../models/itemsModel.js"
 
+//POO'S
+import Usage from "../entitys/usagesEntity.js"
+import Item from "../entitys/itemEntity.js"
 
 
 
-export const createUsage = async ({data}) => {
-    if(!data.quantity || !data.userId|| !data.workId || !data.lote || !data.usedAt || !data.purpose){
-        throw new Error ("Missing required fields")
+
+export const createUsage = async ({data}) => { 
+    const itemData = await verifyQuantityByItemId({itemId:data.itemId})
+    
+    if(!itemData || itemData.length === 0){
+        throw new Error("Item not found");
     }
-    //Verificar quantidade disponível no sistema   
-    const verifyQuantity = await verifyQuantityByItemId({itemId: data.itemId})
-    if(verifyQuantity[0].quantity < data.quantity){
-        throw new Error("Invalid quantity: the quantity available in stock is less than the quantity requested");
-    }
-    else{
-        const updateQuantityItemByWorkId = await updateQuantityItem({itemId: data.itemId, quantity:(verifyQuantity[0].quantity - data.quantity)})
-        const dataFormatted = new Date(data.usedAt)
-        return await usagesModel.createUsage({data, dataFormatted })
-    }
+
+    const item = new Item(itemData[0])
+
+    item.updateQuantity(data.quantity)
+
+    const usage = new Usage(data)
+    usage.updateDate(new Date(usage.usedAt))
+
+    
+    const createUsage = await usagesModel.createUsage({data:usage})
+
+
+    return await updateQuantityItem({itemId:item.id, quantity:item.quantity})
+
+    // AVALIAR SE VALE APENA USAR O PRISMA TRANSACTION
+    
 }
 
 
@@ -35,7 +48,8 @@ export const listUsageByWorkId = async ({workId}) => {
         throw new Error("No usages found with this work id");
     }
 
-
-    return await usagesModel.listUsageByWorkId({workId:Number(workId)})
+    const usage = await usagesModel.listUsageByWorkId({workId:Number(workId)})
+    
+    return usage.map(item => new Usage(item))
     
 }

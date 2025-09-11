@@ -1,6 +1,6 @@
 import prisma from "./connectionModel.js"
 
-export const createUsage = async ({data, dataFormatted}) => {
+export const createUsage = async ({data}) => {
     return await prisma.usage.create({
         data:{
             itemId:data.itemId,
@@ -8,7 +8,7 @@ export const createUsage = async ({data, dataFormatted}) => {
             quantity:data.quantity,
             workId:data.workId,
             lote:data.lote,
-            usedAt:dataFormatted,
+            usedAt:data.usedAt,
             purpose:data.purpose
 
         }
