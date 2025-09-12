@@ -29,3 +29,9 @@ export const listAllItemsByWorkId = async ({workId}) => {
     
     return itemsByWorkId.map(item => new Item(item))
 }
+
+export const requestEquipament = async ({data}) => {
+    const request = new Request(data)
+
+    return await requestModel.requestEquipament({data: request})
+}

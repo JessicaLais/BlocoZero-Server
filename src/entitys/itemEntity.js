@@ -29,7 +29,19 @@ export default class Item {
 
         
     }
+    requestEquipament = (equipmentData) => {
+        if (equipmentData.quantity <= 0){
+            throw new Error("Requested quantity must be greater than zero")
+        }
 
+            this.code = equipmentData.code,
+            this.name = equipmentData.name,
+            this.type = equipmentData.type,
+            this.quantity = equipmentData.quantity,
+            this.unit = equipmentData.unit,
+            this.lote = equipmentData.lote,
+            this.status = "Pending",
+            this.requested_at = new Date()
 
-
+    }
 }

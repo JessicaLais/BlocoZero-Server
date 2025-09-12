@@ -24,5 +24,8 @@ router.post("/register", verifyBody, itemsController.createItems)
 //List all Items System
 router.get("/list/:workId", itemsController.listAllItemsByWorkId);
 
+//Request New Equipment
+router.post("/request-equipment", requestEquipament);
+
 
 export default router;

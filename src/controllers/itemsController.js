@@ -1,3 +1,4 @@
+import { response } from "express"
 import * as itemsService from "../services/itemsService.js"
 
 export const createItems = async (req, res) => {
@@ -20,6 +21,17 @@ export const listAllItemsByWorkId = async (req, res) => {
         res.status(400).json({error:error.message})
     }
     
+}
+
+
+export const requestEquipament = async (req, res) => {
+    try {
+        const data = req.body
+        const requestEquipament = await itemsService.requestEquipament({data})
+        res.status(200).json({response:"sucess"})
+    } catch(erro){
+        res.status(400).json({error:error.message});
+    }
 }
 
 

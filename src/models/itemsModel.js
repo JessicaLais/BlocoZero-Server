@@ -46,3 +46,18 @@ export const listAllItemsByWorkId = async ({workId}) => {
     
 }
 
+
+export const requestEquipament = async ({data}) =>{
+    return await prisma.request.create({
+        data: {
+            enterprise_id: 0,
+            work_id: data.work_id,
+            code: data.code,
+            name: data.name,
+            type: data.type,
+            quantity: data.quantity,
+            unit: data.unit,
+            lote: data.lote
+        }
+    })
+}
