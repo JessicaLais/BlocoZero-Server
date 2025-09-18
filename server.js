@@ -25,6 +25,7 @@ app.use("/work", workRouter);
 app.use("/items", itemsRouter);
 app.use("/usages", usagesRouter);
 app.use("/schedule", scheduleRouter); 
+app.use("/reports",reportRouter );
 
 //middlewares
 app.use(middlewares.verifyRoutes)
