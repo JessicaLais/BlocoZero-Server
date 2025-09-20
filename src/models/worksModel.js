@@ -25,7 +25,7 @@ export const getAllWorks = async () => {
 
 export const getSpecificWork = async ({id}) => {
     return await prisma.work.findUnique({
-        where:{
+       where:{
             id: id
         }
     })

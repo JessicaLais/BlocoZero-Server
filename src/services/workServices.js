@@ -2,7 +2,7 @@
 import  * as workModel  from '../models/worksModel.js';
 
 //POO
-import Work from "../entitys/workEntity.js"
+import Work from '../entitys/workEntity.js'
 
 
 

@@ -20,7 +20,7 @@ model Enterprise {
 
   users User[]
   works Work[]
-  items Item[] // 👈 adiciona relação oposta
+  items Item[]
 }
 
 model User {
@@ -34,9 +34,10 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  enterprise Enterprise @relation(fields: [enterprise_id], references: [id])
-  works      Work[]     @relation("UserWorks")
-  usages     Usage[] // 👈 adiciona relação oposta
+  enterprise    Enterprise     @relation(fields: [enterprise_id], references: [id])
+  works         Work[]         @relation("UserWorks")
+  usages        Usage[]
+  defectReports DefectReport[] // 👈 relação oposta
 }
 
 model Work {
@@ -56,44 +57,59 @@ model Work {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  enterprise Enterprise @relation(fields: [enterprise_id], references: [id])
-  users      User[]     @relation("UserWorks")
-  items      Item[] // 👈 adiciona relação oposta
-  usages     Usage[] // 👈 adiciona relação oposta
+  enterprise    Enterprise     @relation(fields: [enterprise_id], references: [id])
+  users         User[]         @relation("UserWorks")
+  items         Item[]
+  usages        Usage[]
+  defectReports DefectReport[] // 👈 relação oposta
 }
 
 model Item {
   id            Int      @id @default(autoincrement())
   enterprise_id Int
   work_id       Int
-  code          String   @unique  // código único do material/equipament
-  name          String            // nome do item
-  type          String           // "material" | "equipamento" | "EPI"
-  quantity      Int             // quantidade disponível em estoque
-  unit          String?         // unidade de medida (ex: kg, m², unidade)
-  lote          String?         // lote do material/EPI
+  code          String   @unique // código único do material/equipamento
+  name          String // nome do item
+  type          String // "material" | "equipamento" | "EPI"
+  quantity      Int // quantidade disponível em estoque
+  unit          String? // unidade de medida (ex: kg, m², unidade)
+  lote          String? // lote do material/EPI
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  enterprise Enterprise @relation(fields: [enterprise_id], references: [id])
-  work       Work       @relation(fields: [work_id], references: [id])
-  usages     Usage[]
+  enterprise    Enterprise     @relation(fields: [enterprise_id], references: [id])
+  work          Work           @relation(fields: [work_id], references: [id])
+  usages        Usage[]
+  defectReports DefectReport[] // 👈 relação oposta
 }
-
 
 model Usage {
-  id          Int      @id @default(autoincrement())
-  itemId      Int      // Código do equipamento/material (FK para Item)
-  quantity    Int      // Quantidade usada
-  userId      Int      // Funcionário responsável
-  workId      Int      // Obra vinculada
-  lote        String   // Lote do material/EPI
-  usedAt      DateTime // Data de uso
-  purpose     String   // Finalidade de uso
-  createdAt   DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  itemId    Int
+  quantity  Int
+  userId    Int
+  workId    Int
+  lote      String
+  usedAt    DateTime
+  purpose   String
+  createdAt DateTime @default(now())
 
-  item Item   @relation(fields: [itemId], references: [id])
-  user User   @relation(fields: [userId], references: [id])
-  work Work   @relation(fields: [workId], references: [id])
+  item Item @relation(fields: [itemId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+  work Work @relation(fields: [workId], references: [id])
 }
 
+model DefectReport {
+  id         Int       @id @default(autoincrement())
+  itemId     Int
+  userId     Int
+  workId     Int?
+  status     String    @default("pendente") // pendente | em_manutencao | resolvido
+  note       String // descrição do defeito
+  reportedAt DateTime  @default(now())
+  resolvedAt DateTime?
+
+  item Item  @relation(fields: [itemId], references: [id])
+  user User  @relation(fields: [userId], references: [id])
+  work Work? @relation(fields: [workId], references: [id]) // 👈 precisa ser opcional
+}

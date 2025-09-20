@@ -1,9 +1,17 @@
 import express from "express";
+
+
+//ROUTERS
 import userController from "./src/routes/userRouter.js";
 import workRouter from "./src/routes/workRouter.js";
 import itemsRouter from "./src/routes/itemsRouter.js"
 import usagesRouter from "./src/routes/usagesRouter.js"
 import scheduleRouter from "./src/routes/scheduleRouter.js";
+import damagedEquipamentRouter from "./src/routes/damagedEquipamentRouter.js"
+
+
+
+
 import cors from "cors";
 import * as middlewares from "./src/middlewares/verifyMiddlewares.js"
 
@@ -25,6 +33,7 @@ app.use("/work", workRouter);
 app.use("/items", itemsRouter);
 app.use("/usages", usagesRouter);
 app.use("/schedule", scheduleRouter); 
+app.use("/damagedEquipament", damagedEquipamentRouter)
 
 //middlewares
 app.use(middlewares.verifyRoutes)
