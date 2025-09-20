@@ -8,7 +8,6 @@ const router = express.Router();
 //List all works
 router.get("/list", workController.getAllWorks);
 
-
 /* 
 #CORPO DA REQUISIÇÃO: REGISTER WORK
 {

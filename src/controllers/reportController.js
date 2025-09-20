@@ -1,4 +1,3 @@
-import { createReport } from "../models/reportModel.js"
 import * as reportService from "../services/reportService.js"
 
 export const createReport = async (req, res) => {
@@ -11,7 +10,7 @@ export const createReport = async (req, res) => {
     }
 }
 
-export async function uploadImagem(req, res) {
+/*export async function uploadImagem(req, res) {
   try {
     const data = req.body;
     const imagem = req.file ? req.file.filename : null; 
@@ -21,7 +20,7 @@ export async function uploadImagem(req, res) {
   } catch (error) {
     res.status(400).json({ erro: error.message });
   }
-}
+}*/
 
 
 
