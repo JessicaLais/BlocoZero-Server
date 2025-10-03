@@ -4,7 +4,7 @@ import Report from "../entitys/reportEntity.js"
 
 export const createReport = async (data) => {
     data.date_register = new Date (data.date_register)
-    data.percentual = parseFloat(data.percentual.replace("%", ""))
+    data.percentual = parseFloat(data.percentual)
     
     const report = new Report(data)
 

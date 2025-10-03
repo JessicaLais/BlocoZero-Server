@@ -97,3 +97,15 @@ model Usage {
   work Work   @relation(fields: [workId], references: [id])
 }
 
+model Report {
+  id            Int      @id @default(autoincrement())
+  work_id       Int      // 👈 ADICIONE ESTA LINHA
+  percentual    Float
+  qtd_work      Float
+  weather       String
+  ocurrence     String
+  stage         String
+  date_register DateTime
+  status        String   @default("pendente")
+}
+

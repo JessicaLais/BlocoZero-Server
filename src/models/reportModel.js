@@ -1,6 +1,6 @@
 import prisma from "./connectionModel.js"
 
-export const createReport = async ({data}) => {
+export const createReport = async (data) => {
     return await prisma.report.create({
         data:{
             //progress:data.progress,
