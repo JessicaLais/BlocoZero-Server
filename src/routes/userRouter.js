@@ -4,35 +4,25 @@ import { verifyBody } from "../middlewares/verifyMiddlewares.js";
 
 const router = express.Router();
 
-//List all User  System
-router.get("/list", userController.getAllUsers);
+router.post("/register", verifyBody, userController.createUser);
 
+router.post(
+  "/register/managerTender",
+  verifyBody,
+  userController.registerManagerTender
+);
 
-/* 
-#CORPO DA REQUISIÇÃO: CREATE USER
-{
-    "email":"joao@blocozero.com",
-    "password":"123456",
-    "phone": "556188888888",
-    "enterprise_id":0,
-    "position":"Encarregado"
-}
-*/
-//Create new User
-router.post("/register", verifyBody, userController.createUser)
-
-
-/* 
-#CORPO DA REQUISIÇÃO: LOGIN USER
-{
-    "email":"joao@blocozero.com",
-    "password":"123456"
-}
-*/
-
-
-
-//Login User
 router.post("/login", verifyBody, userController.login);
 
+router.get("/list/:enterprise_id", userController.getAllUsers);
+
+router.get("/listManagers/:enterprise_id", userController.getAllManagers);
+
+router.get("/listTenders/:enterprise_id", userController.getAllTenders);
+
+router.get("/listSpecificUser/:id", userController.getUserId);
+
+router.put("/updateUser/:id", verifyBody, userController.updateUser);
+
+router.delete("/deleteUser/:id", userController.deleteUser);
 export default router;
