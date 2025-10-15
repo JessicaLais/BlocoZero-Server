@@ -18,98 +18,138 @@ model Enterprise {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  users User[]
-  works Work[]
-  items Item[]
+  users     User[]
+  works     Work[]
+
+  // Relação inversa com managers e tenders
+  managers  Manager[]
+  tenders   Tender[]
 }
 
 model User {
-  id            Int      @id @default(autoincrement())
+  id            Int        @id @default(autoincrement())
   enterprise_id Int
-  position      String
+  userFunction  String      // "manager" | "tender"
   name          String
-  email         String   @unique
+  email         String      @unique
   password      String
   phone         String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  hourlyRate    Float    
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 
-  enterprise    Enterprise     @relation(fields: [enterprise_id], references: [id])
-  works         Work[]         @relation("UserWorks")
-  usages        Usage[]
-  defectReports DefectReport[] // 👈 relação oposta
+  enterprise    Enterprise  @relation(fields: [enterprise_id], references: [id])
+
+  // Relações com cargos
+  manager       Manager?
+  tender        Tender?
+
+  // Relação inversa com BudgetManagerWork
+  budgetManagerWorks BudgetManagerWork[]
+
+  // 🔥 Adicionei esta linha: relação inversa com Budget
+  budgets       Budget[]
+}
+
+
+model Manager {
+  id            Int        @id @default(autoincrement())
+  user_id       Int        @unique
+  enterprise_id Int
+
+  user          User       @relation(fields: [user_id], references: [id])
+  enterprise    Enterprise @relation(fields: [enterprise_id], references: [id])
+  managerTender ManagerTender[]
+}
+
+model Tender {
+  id            Int        @id @default(autoincrement())
+  user_id       Int        @unique
+  enterprise_id Int
+
+  user          User       @relation(fields: [user_id], references: [id])
+  enterprise    Enterprise @relation(fields: [enterprise_id], references: [id])
+  managerTender ManagerTender[]
+  workTenders   WorkTender[]
+}
+
+model ManagerTender {
+  id         Int     @id @default(autoincrement())
+  manager_id Int
+  tender_id  Int
+
+  manager    Manager @relation(fields: [manager_id], references: [id])
+  tender     Tender  @relation(fields: [tender_id], references: [id])
 }
 
 model Work {
-  id              Int      @id @default(autoincrement())
-  enterprise_id   Int
-  enterprise_name String
-  title           String
-  location        String
-  employees       Int
-  budget          Float
-  start_date      DateTime
-  end_date        DateTime
-  progress        Int
-  description     String
-  status          String
-  photo_url       String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id_work       Int       @id @default(autoincrement())
+  id_enterprise Int
+  title         String
+  cnpj          String
+  address       String
+  cep           String
+  budget        Float
+  start_time    DateTime
+  end_time      DateTime
+  description   String
+  photo_url     String?
+  isActive      Boolean     @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  enterprise    Enterprise     @relation(fields: [enterprise_id], references: [id])
-  users         User[]         @relation("UserWorks")
-  items         Item[]
-  usages        Usage[]
-  defectReports DefectReport[] // 👈 relação oposta
+  enterprise    Enterprise @relation(fields: [id_enterprise], references: [id])
+  workTenders   WorkTender[]
+
+  // Relação inversa com BudgetManagerWork
+  budgetManagerWorks BudgetManagerWork[]
 }
 
-model Item {
-  id            Int      @id @default(autoincrement())
-  enterprise_id Int
-  work_id       Int
-  code          String   @unique // código único do material/equipamento
-  name          String // nome do item
-  type          String // "material" | "equipamento" | "EPI"
-  quantity      Int // quantidade disponível em estoque
-  unit          String? // unidade de medida (ex: kg, m², unidade)
-  lote          String? // lote do material/EPI
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  enterprise    Enterprise     @relation(fields: [enterprise_id], references: [id])
-  work          Work           @relation(fields: [work_id], references: [id])
-  usages        Usage[]
-  defectReports DefectReport[] // 👈 relação oposta
-}
-
-model Usage {
+model WorkTender {
   id        Int      @id @default(autoincrement())
-  itemId    Int
-  quantity  Int
-  userId    Int
-  workId    Int
-  lote      String
-  usedAt    DateTime
-  purpose   String
+  id_work   Int
+  id_tender Int
   createdAt DateTime @default(now())
 
-  item Item @relation(fields: [itemId], references: [id])
-  user User @relation(fields: [userId], references: [id])
-  work Work @relation(fields: [workId], references: [id])
+  work      Work     @relation(fields: [id_work], references: [id_work])
+  tender    Tender   @relation(fields: [id_tender], references: [id])
 }
 
-model DefectReport {
-  id         Int       @id @default(autoincrement())
-  itemId     Int
-  userId     Int
-  workId     Int?
-  status     String    @default("pendente") // pendente | em_manutencao | resolvido
-  note       String // descrição do defeito
-  reportedAt DateTime  @default(now())
-  resolvedAt DateTime?
+model Budget {
+  id_budget      Int       @id @default(autoincrement())
+  code           String
+  name           String
+  user_id        Int
+  type           String
+  category       String
+  unitMeasure    String
+  cost           Float
+  stockQuantity  Int
+  hours          Float
+  extraHours     Float
+  total          Float
+  allocatedStage String
+  function       String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
-  item Item  @relation(fields: [itemId], references: [id])
-  user User  @relation(fields: [userId], references: [id])
-  work Work? @relation(fields: [workId], references: [id]) // 👈 precisa ser opcional
+  // Relacionamentos
+  user           User      @relation(fields: [user_id], references: [id])
+  budgetActions  BudgetManagerWork[]
 }
+
+model BudgetManagerWork {
+  id         Int      @id @default(autoincrement())
+  id_manager Int
+  id_work    Int
+  id_budget  Int
+  actionType String
+  createdAt  DateTime @default(now())
+
+  // Relacionamentos
+  budget   Budget   @relation(fields: [id_budget], references: [id_budget])
+  work     Work     @relation(fields: [id_work], references: [id_work])
+  manager  User     @relation(fields: [id_manager], references: [id])
+}
+

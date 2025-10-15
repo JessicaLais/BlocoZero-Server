@@ -4,33 +4,30 @@ import { verifyBody } from "../middlewares/verifyMiddlewares.js";
 
 const router = express.Router();
 
-
-//List all works
-router.get("/list", workController.getAllWorks);
-
-
-/* 
-#CORPO DA REQUISIÇÃO: REGISTER WORK
-{
-    "enterprise_id":1,
-    "enterprise_name":"Espindola Empreendimentos",
-    "title":"Residencial Jardim das Flores",
-    "location":"Rio de Janeiro - RJ",
-    "employees":30,
-    "budget":10000000,
-    "startDate":"2024-01-15",
-    "endDate":"2028-01-15",
-    "progress":50,
-    "description":"Desenvolvimento de um condomínio residencial com 50 unidades habitacionais.",
-    "status":"Fase de acabamento",
-    "photoUrl":"https://img.dfimoveis.com.br/fotos/468058/ff49e8efe4a663efa4cbd24230329e6d.webp"
-}
-*/
 //Create new Work
-router.post ("/register", verifyBody, workController.createWork )
+router.post("/register", verifyBody, workController.createWork);
 
+//List all works (3) (MANAGER)
+router.get("/list/:enterprise_id", workController.getAllWorks);
 
+//List all works by page number (MANAGER)
+router.get(
+  "/list/:enterprise_id/page/:pageNumber",
+  workController.getWorksPageId
+);
+
+router.get("/list/tender/:tender_id", workController.getAllWorkTender);
+
+router.get(
+  "/list/tender/:tender_id/page/:pageNumber",
+  workController.getWorksTenderPageId
+);
 //List specific work by id
-router.get("/:id", workController.getSpecificWork);
+router.get("/list/specificWork/:id", workController.getSpecificWork);
 
+//Update specific work by id
+router.put("/updateWork/:id", verifyBody, workController.updateWorkById);
+
+//Delete specific work by id (desactived)
+router.delete("/deleteWork/:id", workController.deleteWorkById);
 export default router;

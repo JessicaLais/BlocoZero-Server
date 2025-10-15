@@ -1,26 +1,64 @@
 export default class Work {
-    constructor ({id, enterprise_id, enterprise_name, title, location, employees, budget, startDate, start_date, endDate, end_date, progress, description, status, photoUrl, photo_url}) {
-        this.id = id || null;
-        this.enterprise_id = enterprise_id;
-        this.enterprise = enterprise_name;
-        this.title = title;
-        this.location = location;
-        this.employees = employees;
-        this.budget = budget;
-        this.startDate = startDate || start_date ;
-        this.endDate = endDate || end_date;
-        this.progress = progress;
-        this.description = description;
-        this.status = status;
-        this.photoUrl = photoUrl || photo_url;
+  constructor({
+    id_work,
+    id_enterprise,
+    title,
+    cnpj,
+    address,
+    cep,
+    budget,
+    start_time,
+    end_time,
+    description,
+    photo_url,
+    tender_id,
+    isActive,
+  }) {
+    this.id_work = id_work || null;
+    this.id_enterprise = id_enterprise;
+    this.title = title;
+    this.cnpj = cnpj;
+    this.address = address;
+    this.cep = cep;
+    this.budget = budget;
+    this.start_time = new Date(start_time);
+    this.end_time = new Date(end_time);
+    this.description = description;
+    this.photo_url = photo_url;
+    this.tender_id = tender_id;
+    this.isActive = isActive;
 
-        //this.validate()
+    this.validate();
+  }
+  validate = () => {
+    if (
+      this.id_enterprise === null ||
+      this.id_enterprise === undefined ||
+      !this.title ||
+      !this.cnpj ||
+      !this.address ||
+      !this.cep ||
+      !this.budget ||
+      !this.start_time ||
+      !this.end_time ||
+      !this.description
+    ) {
+      throw new Error("Missing required fields");
+    }
+  };
 
-    }
-    validate = () => {
-        if (!this.enterprise || !this.title || !this.location || !this.employees || !this.budget || !this.startDate || !this.endDate 
-            || !this.progress || !this.description || !this.status || !this.photoUrl) {
-                throw new Error("Missing required fields");
-            }
-    }
+  smallInformation = () => {
+    return {
+      id_work: this.id_work,
+      id_enterprise: this.id_enterprise,
+      title: this.title,
+      address: this.address,
+      budget: this.budget,
+      start_time: this.start_time,
+      end_time: this.end_time,
+      photo_url: this.photo_url,
+      tender_id: this.tender_id,
+      isActive: this.isActive,
+    };
+  };
 }
