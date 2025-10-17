@@ -19,8 +19,8 @@ app.use(cors());
 app.use(express.json());
 
 // Rota principal
-app.get("/", (req, res) => {
-  res.send({ Status: "API working" });
+app.get("/ping", (req, res) => {
+  res.send("PONG");
 });
 
 // Usando as rotas de login
@@ -37,5 +37,5 @@ app.use("/damagedEquipament", damagedEquipamentRouter);
 app.use(middlewares.verifyRoutes);
 
 app.listen(port, () => {
-  console.log(`Servidor rodando em http://localhost:${port}`);
+  console.log(`Servidor rodando em http://localhost:${port}/ping`);
 });

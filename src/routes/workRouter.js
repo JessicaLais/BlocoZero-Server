@@ -25,6 +25,8 @@ router.get(
 //List specific work by id
 router.get("/list/specificWork/:id", workController.getSpecificWork);
 
+//CALCULAR NÚMERO DE FUNCIONÁRIOS ATIVOS EM UMA OBRA
+
 //Update specific work by id
 router.put("/updateWork/:id", verifyBody, workController.updateWorkById);
 

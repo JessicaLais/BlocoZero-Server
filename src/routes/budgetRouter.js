@@ -4,6 +4,8 @@ import * as budgetController from "../controllers/budgetController.js";
 
 const router = express.Router();
 
-router.post("/register", verifyBody, budgetController.registerbudget);
+router.post("/registerLabor", verifyBody, budgetController.createBudgetLabor);
+
+router.get("/list/:id", budgetController.listBudgetsByWorkId);
 
 export default router;

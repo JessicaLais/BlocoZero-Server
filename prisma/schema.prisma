@@ -126,7 +126,8 @@ model Budget {
   unitMeasure    String
   cost           Float
   stockQuantity  Int
-  hours          Float
+  hoursWorked    Int
+  costHours      Float
   extraHours     Float
   total          Float
   allocatedStage String

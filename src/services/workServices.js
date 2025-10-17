@@ -1,9 +1,11 @@
 //Models
 import * as workModel from "../models/worksModel.js";
-import { findTenderById } from "../models/usersModel.js";
+import { findTenderById, allUsers } from "../models/usersModel.js";
 //POO
 import Work from "../entitys/workEntity.js";
 import User from "../entitys/userEntity.js";
+
+const limit = 5;
 
 //CREATE WORK
 export const createWork = async (data) => {
@@ -24,7 +26,7 @@ export const createWork = async (data) => {
 export const getAllWorks = async ({ enterprise_id }) => {
   enterprise_id = Number(enterprise_id);
   const works = await workModel.getAllWorks({ enterprise_id });
-  return works.slice(0, 3).map((item) => new Work(item).smallInformation());
+  return works.slice(0, limit).map((item) => new Work(item).smallInformation());
 };
 
 //Get workes by number page
@@ -32,7 +34,6 @@ export const getWorksPageId = async ({ pageNumber, enterprise_id }) => {
   enterprise_id = Number(enterprise_id);
   const works = await workModel.getAllWorks({ enterprise_id });
 
-  const limit = 3;
   const startIndex = (Number(pageNumber) - 1) * limit;
   const endIndex = startIndex + limit;
 
@@ -52,7 +53,7 @@ export const getAllWorkTender = async ({ tender_Id }) => {
     tender_id: searchTender.id,
   });
   return works
-    .slice(0, 3)
+    .slice(0, limit)
     .map((work) => new Work(work.work).smallInformation());
 };
 
@@ -66,7 +67,6 @@ export const getWorksTenderPageId = async ({ pageNumber, tender_Id }) => {
     tender_id: searchTender.id,
   });
 
-  const limit = 3;
   const startIndex = (Number(pageNumber) - 1) * limit;
   const endIndex = startIndex + limit;
 
@@ -82,6 +82,9 @@ export const getSpecificWork = async ({ id }) => {
     throw new Error("No work found with this id");
   }
   const work = new Work(getSpecificWork);
+  const employees = await allUsers({ enterprise_id: work.enterprise_id });
+
+  work.employees = employees.length;
 
   return {
     work: work,
