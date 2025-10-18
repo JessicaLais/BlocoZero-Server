@@ -1,6 +1,7 @@
 //Models
 import * as workModel from "../models/worksModel.js";
 import { findTenderById, allUsers } from "../models/usersModel.js";
+import { findEntrepriseById } from "../models/enterpriseModel.js";
 //POO
 import Work from "../entitys/workEntity.js";
 import User from "../entitys/userEntity.js";
@@ -25,21 +26,40 @@ export const createWork = async (data) => {
 // GET ALL WORKES
 export const getAllWorks = async ({ enterprise_id }) => {
   enterprise_id = Number(enterprise_id);
-  const works = await workModel.getAllWorks({ enterprise_id });
-  return works.slice(0, limit).map((item) => new Work(item).smallInformation());
+
+  const allWorks = await workModel.getAllWorks({ enterprise_id });
+  const works = allWorks
+    .slice(0, limit)
+    .map((item) => new Work(item).smallInformation());
+  if (allWorks.length > limit) {
+    return {
+      works,
+      page: "1 of " + Math.ceil(allWorks.length / limit),
+    };
+  }
+  return { works, page: "1 of 1" };
 };
 
 //Get workes by number page
 export const getWorksPageId = async ({ pageNumber, enterprise_id }) => {
   enterprise_id = Number(enterprise_id);
-  const works = await workModel.getAllWorks({ enterprise_id });
-
   const startIndex = (Number(pageNumber) - 1) * limit;
   const endIndex = startIndex + limit;
-
-  return works
+  const allWorks = await workModel.getAllWorks({ enterprise_id });
+  const works = allWorks
     .slice(startIndex, endIndex)
-    .map((item) => new Work(item).smallInformation());
+    .map((work) => new Work(work).smallInformation());
+  if (
+    Math.ceil(allWorks.length / limit) < Number(pageNumber) ||
+    Number(pageNumber) < 1
+  ) {
+    throw new Error("Page number not exist");
+  }
+
+  return {
+    works,
+    page: pageNumber + " of " + Math.ceil(allWorks.length / limit),
+  };
 };
 
 //Get all works tender
@@ -49,12 +69,21 @@ export const getAllWorkTender = async ({ tender_Id }) => {
   if (!searchTender) {
     throw new Error("Tender not found");
   }
-  const works = await workModel.getAllWorkTender({
+  const allWorks = await workModel.getAllWorkTender({
     tender_id: searchTender.id,
   });
-  return works
+  const works = allWorks
     .slice(0, limit)
     .map((work) => new Work(work.work).smallInformation());
+
+  if (allWorks.length > limit) {
+    return {
+      works,
+      page: "1 of " + Math.ceil(allWorks.length / limit),
+    };
+  }
+
+  return { works, page: "1 of 1" };
 };
 
 export const getWorksTenderPageId = async ({ pageNumber, tender_Id }) => {
@@ -63,16 +92,26 @@ export const getWorksTenderPageId = async ({ pageNumber, tender_Id }) => {
   if (!searchTender) {
     throw new Error("Tender not found");
   }
-  const works = await workModel.getAllWorkTender({
+  const allWorks = await workModel.getAllWorkTender({
     tender_id: searchTender.id,
   });
 
+  if (
+    Math.ceil(allWorks.length / limit) < Number(pageNumber) ||
+    Number(pageNumber) < 1
+  ) {
+    throw new Error("Page number not exist");
+  }
   const startIndex = (Number(pageNumber) - 1) * limit;
   const endIndex = startIndex + limit;
-
-  return works
+  const works = allWorks
     .slice(startIndex, endIndex)
-    .map((item) => new Work(item.work).smallInformation());
+    .map((work) => new Work(work.work).smallInformation());
+
+  return {
+    works,
+    page: pageNumber + " of " + Math.ceil(allWorks.length / limit),
+  };
 };
 
 //GET SPECIFIC WORK BY USER ID

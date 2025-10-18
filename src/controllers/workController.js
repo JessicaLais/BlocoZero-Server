@@ -18,13 +18,17 @@ export const getAllWorks = async (req, res) => {
 };
 
 export const getWorksPageId = async (req, res) => {
-  const pageNumber = req.params.pageNumber;
-  const enterprise_id = req.params.enterprise_id;
-  const works = await workServices.getWorksPageId({
-    pageNumber,
-    enterprise_id,
-  });
-  res.status(200).json({ works });
+  try {
+    const pageNumber = req.params.pageNumber;
+    const enterprise_id = req.params.enterprise_id;
+    const works = await workServices.getWorksPageId({
+      pageNumber,
+      enterprise_id,
+    });
+    res.status(200).json({ works });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 };
 
 export const getAllWorkTender = async (req, res) => {
