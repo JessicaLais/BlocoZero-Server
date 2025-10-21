@@ -9,83 +9,42 @@ datasource db {
 }
 
 model Enterprise {
-  id        Int      @id @default(autoincrement())
-  name      String
-  cnpj      String?  @unique
-  address   String?
-  phone     String?
-  email     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id_entreprise Int      @id @default(autoincrement())
+  name           String
+  cnpj           String @unique
+  address        String
+  phone          String
+  email          String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  users     User[]
-  works     Work[]
-
-  // Relação inversa com managers e tenders
-  managers  Manager[]
-  tenders   Tender[]
+  users User[]
+  works Work[]
 }
 
 model User {
-  id            Int        @id @default(autoincrement())
+  id_user       Int       @id @default(autoincrement())
   enterprise_id Int
-  userFunction  String      // "manager" | "tender"
-  name          String
-  email         String      @unique
+  userFunction  String
+  email         String
   password      String
-  phone         String?
-  hourlyRate    Float    
-  isActive      Boolean     @default(true)
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  phone         String
+  works         String
+  hourlyRate    Float
+  name          String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  enterprise    Enterprise  @relation(fields: [enterprise_id], references: [id])
-
-  // Relações com cargos
-  manager       Manager?
-  tender        Tender?
-
-  // Relação inversa com BudgetManagerWork
-  budgetManagerWorks BudgetManagerWork[]
-
-  // 🔥 Adicionei esta linha: relação inversa com Budget
-  budgets       Budget[]
-}
-
-
-model Manager {
-  id            Int        @id @default(autoincrement())
-  user_id       Int        @unique
-  enterprise_id Int
-
-  user          User       @relation(fields: [user_id], references: [id])
-  enterprise    Enterprise @relation(fields: [enterprise_id], references: [id])
-  managerTender ManagerTender[]
-}
-
-model Tender {
-  id            Int        @id @default(autoincrement())
-  user_id       Int        @unique
-  enterprise_id Int
-
-  user          User       @relation(fields: [user_id], references: [id])
-  enterprise    Enterprise @relation(fields: [enterprise_id], references: [id])
-  managerTender ManagerTender[]
-  workTenders   WorkTender[]
-}
-
-model ManagerTender {
-  id         Int     @id @default(autoincrement())
-  manager_id Int
-  tender_id  Int
-
-  manager    Manager @relation(fields: [manager_id], references: [id])
-  tender     Tender  @relation(fields: [tender_id], references: [id])
+  enterprise     Enterprise     @relation(fields: [enterprise_id], references: [id_entreprise])
+  progressReports ProgressReport[]
+  budgetReports   BudgetReport[]
 }
 
 model Work {
   id_work       Int       @id @default(autoincrement())
-  id_enterprise Int
+  id_entreprise Int
+  id_manager    Int
+  id_tender     Int?
   title         String
   cnpj          String
   address       String
@@ -93,64 +52,191 @@ model Work {
   budget        Float
   start_time    DateTime
   end_time      DateTime
-  description   String
-  photo_url     String?
-  isActive      Boolean     @default(true)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  describe      String
+  photo_url     String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  enterprise    Enterprise @relation(fields: [id_enterprise], references: [id])
-  workTenders   WorkTender[]
-
-  // Relação inversa com BudgetManagerWork
-  budgetManagerWorks BudgetManagerWork[]
+  enterprise        Enterprise         @relation(fields: [id_entreprise], references: [id_entreprise])
+  resources         Resource[]
+  stages            Stage[]
+  physicalSchedules PhysicalSchedule[]
+  financialSchedules FinancialSchedule[]
+  progressReports   ProgressReport[]
 }
 
-model WorkTender {
-  id        Int      @id @default(autoincrement())
-  id_work   Int
-  id_tender Int
-  createdAt DateTime @default(now())
+model Stage {
+  id_stage     Int       @id @default(autoincrement())
+  id_work      Int?
+  name         String
+  substage     String
+  progress     Float
+  expStartDate DateTime
+  expEndDate   DateTime
+  exeStartDate DateTime?
+  exeEndDate   DateTime?
 
-  work      Work     @relation(fields: [id_work], references: [id_work])
-  tender    Tender   @relation(fields: [id_tender], references: [id])
+  // relação com Work (corrigida)
+  work Work? @relation(fields: [id_work], references: [id_work])
+
+  physicalSchedules  PhysicalSchedule[]
+  financialSchedules FinancialSchedule[]
+  progressReports    ProgressReport[]
+  budgetReports      BudgetReport[]
 }
 
-model Budget {
-  id_budget      Int       @id @default(autoincrement())
+model Resource {
+  id_budget      Int      @id @default(autoincrement())
+  id_work        Int
+  id_category    Int
+  id_type        Int
   code           String
   name           String
-  user_id        Int
-  type           String
-  category       String
   unitMeasure    String
   cost           Float
   stockQuantity  Int
-  hoursWorked    Int
-  costHours      Float
+  hours          Float
   extraHours     Float
   total          Float
   allocatedStage String
   function       String
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  weightLength   Float
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  // Relacionamentos
-  user           User      @relation(fields: [user_id], references: [id])
-  budgetActions  BudgetManagerWork[]
-}
-
-model BudgetManagerWork {
-  id         Int      @id @default(autoincrement())
-  id_manager Int
-  id_work    Int
-  id_budget  Int
-  actionType String
-  createdAt  DateTime @default(now())
-
-  // Relacionamentos
-  budget   Budget   @relation(fields: [id_budget], references: [id_budget])
   work     Work     @relation(fields: [id_work], references: [id_work])
-  manager  User     @relation(fields: [id_manager], references: [id])
+  category Category @relation(fields: [id_category], references: [id_category])
+  type     Type     @relation(fields: [id_type], references: [id_type])
+  stocks   Stock[]
 }
 
+model PhysicalSchedule {
+  id_physicalSchedule Int @id @default(autoincrement())
+  id_work  Int
+  id_stage Int
+
+  work  Work  @relation(fields: [id_work], references: [id_work])
+  stage Stage @relation(fields: [id_stage], references: [id_stage])
+  financialSchedules FinancialSchedule[]
+}
+
+model FinancialSchedule {
+  id_financialSchedule Int @id @default(autoincrement())
+  id_work              Int
+  id_stage             Int
+  id_physicalSchedule  Int
+  period               DateTime
+  percentage           Float
+  value                Float
+
+  work              Work              @relation(fields: [id_work], references: [id_work])
+  stage             Stage             @relation(fields: [id_stage], references: [id_stage])
+  physicalSchedule  PhysicalSchedule  @relation(fields: [id_physicalSchedule], references: [id_physicalSchedule])
+}
+
+model EquipmentRequest {
+  id_equipment Int @id @default(autoincrement())
+  id_type      Int
+  id_category  Int
+  name         String
+  quantity     Int
+
+  type     Type     @relation(fields: [id_type], references: [id_type])
+  category Category @relation(fields: [id_category], references: [id_category])
+}
+
+model Type {
+  id_type Int @id @default(autoincrement())
+  name    String
+
+  resources         Resource[]
+  equipmentRequests EquipmentRequest[]
+  stocks            Stock[]
+  budgetReports     BudgetReport[]
+}
+
+model ProgressReport {
+  id_progressReport Int @id @default(autoincrement())
+  id_work  Int
+  id_user  Int
+  id_stage Int
+  title           String
+  reportVersion   String
+  createdAt       DateTime @default(now())
+  substage        String
+  weather         String
+  startDate       DateTime?
+  endDate         DateTime?
+  note            String
+
+  work  Work  @relation(fields: [id_work], references: [id_work])
+  user  User  @relation(fields: [id_user], references: [id_user])
+  stage Stage @relation(fields: [id_stage], references: [id_stage])
+}
+
+model BudgetReport {
+  id_budgetReport   Int @id @default(autoincrement())
+  id_type           Int
+  id_user           Int
+  id_stage          Int
+  title             String
+  name              String
+  referencePeriod   DateTime
+  createdAt         DateTime @default(now())
+  overallPercentage Float
+  availableBalance  Float
+  plannedValue      Float
+  executedValue     Float
+  financialDeviation Float
+
+  type  Type  @relation(fields: [id_type], references: [id_type])
+  user  User  @relation(fields: [id_user], references: [id_user])
+  stage Stage @relation(fields: [id_stage], references: [id_stage])
+}
+
+model Stock {
+  id_stock          Int @id @default(autoincrement())
+  id_budget         Int
+  id_type           Int
+  id_category       Int
+  code              String
+  name              String
+  unitMeasure       String
+  stockQuantity     Int
+  allocatedStage    String
+  weightLength      Float
+  recentInflow      Int
+  cumulativeInflow  Int
+  cumulativeOutflow Int
+  recentOutflow     Int
+  actualQuantity    Int
+  minQuantity       Int
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  resource Resource @relation(fields: [id_budget], references: [id_budget])
+  type     Type     @relation(fields: [id_type], references: [id_type])
+  category Category @relation(fields: [id_category], references: [id_category])
+  materialUsages MaterialUsage[]
+}
+
+model MaterialUsage {
+  id_materialUsage Int @id @default(autoincrement())
+  id_stock         Int
+  employee_name    String
+  material_name    String
+  useDate          DateTime
+  code             Int
+  defect           String
+
+  stock Stock @relation(fields: [id_stock], references: [id_stock])
+}
+
+model Category {
+  id_category Int @id @default(autoincrement())
+  name        String
+
+  resources         Resource[]
+  equipmentRequests EquipmentRequest[]
+  stocks            Stock[]
+}

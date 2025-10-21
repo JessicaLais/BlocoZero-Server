@@ -1,7 +1,0 @@
--- CreateTable
-CREATE TABLE "EnterpriseWork" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "id_enterprise" INTEGER NOT NULL,
-    "id_work" INTEGER NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
