@@ -11,7 +11,7 @@ export const findEnterpriseByCNPJ = async ({ cnpj }) => {
 export const findEntrepriseById = async ({ id }) => {
   return await prisma.enterprise.findUnique({
     where: {
-      id,
+      id_entreprise: id,
     },
   });
 };

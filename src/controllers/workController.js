@@ -1,11 +1,15 @@
-import Work from "../entitys/workEntity.js";
 import * as workServices from "../services/workServices.js";
+import fs from "fs";
 
 export const createWork = async (req, res) => {
   try {
+    const file = req.file;
     const data = req.body;
-    const createWork = await workServices.createWork(data);
-    res.status(200).json({ response: "sucess" });
+    const fileBuffer = fs.readFileSync(file.path);
+    const createWork = await workServices.createWork({ data, fileBuffer });
+
+    fs.unlinkSync(file.path); // Remove o arquivo temporário após a leitura
+    res.status(200).json({ response: "success" });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

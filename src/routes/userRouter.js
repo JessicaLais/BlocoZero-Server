@@ -6,23 +6,13 @@ const router = express.Router();
 
 router.post("/register", verifyBody, userController.createUser);
 
-router.post(
-  "/register/managerTender",
-  verifyBody,
-  userController.registerManagerTender
-);
+router.get("/list/:enterprise_id", userController.getAllUsers);
+
+router.get("/specific/:id", userController.getUserId);
 
 router.post("/login", verifyBody, userController.login);
 
-router.get("/list/:enterprise_id", userController.getAllUsers);
+router.put("/update/:id", verifyBody, userController.updateUser);
 
-router.get("/listManagers/:enterprise_id", userController.getAllManagers);
-
-router.get("/listTenders/:enterprise_id", userController.getAllTenders);
-
-router.get("/listSpecificUser/:id", userController.getUserId);
-
-router.put("/updateUser/:id", verifyBody, userController.updateUser);
-
-router.delete("/deleteUser/:id", userController.deleteUser);
+router.delete("/delete/:id", userController.deleteUser);
 export default router;

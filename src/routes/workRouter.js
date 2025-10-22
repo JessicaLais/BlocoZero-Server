@@ -1,11 +1,13 @@
 import express from "express";
 import * as workController from "../controllers/workController.js";
 import { verifyBody } from "../middlewares/verifyMiddlewares.js";
+import multer from "multer";
 
 const router = express.Router();
+const upload = multer({ dest: "uploads/" });
 
 //Create new Work
-router.post("/register", verifyBody, workController.createWork);
+router.post("/register", upload.single("photo"), workController.createWork);
 
 //List all works (3) (MANAGER)
 router.get("/list/:enterprise_id", workController.getAllWorks);

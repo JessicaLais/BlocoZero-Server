@@ -34,6 +34,7 @@ model User {
   name          String
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  isActive      Boolean
 
   enterprise     Enterprise     @relation(fields: [enterprise_id], references: [id_entreprise])
   progressReports ProgressReport[]
@@ -53,7 +54,7 @@ model Work {
   start_time    DateTime
   end_time      DateTime
   describe      String
-  photo_url     String
+  photo         Bytes
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

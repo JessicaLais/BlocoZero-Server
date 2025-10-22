@@ -1,6 +1,6 @@
 //Models
 import * as workModel from "../models/worksModel.js";
-import { findTenderById, allUsers } from "../models/usersModel.js";
+
 import { findEntrepriseById } from "../models/enterpriseModel.js";
 //POO
 import Work from "../entitys/workEntity.js";
@@ -9,18 +9,10 @@ import User from "../entitys/userEntity.js";
 const limit = 5;
 
 //CREATE WORK
-export const createWork = async (data) => {
-  const work = new Work(data);
-  const searchTender = await findTenderById({ user_id: data.tender_id });
-  if (!searchTender) {
-    return await workModel.createWork({ data: work });
-  }
+export const createWork = async ({ data, fileBuffer }) => {
+  console.log(data);
 
-  const newCreateWork = await workModel.createWork({ data: work });
-  return await workModel.createWorkTender({
-    work_id: newCreateWork.id_work,
-    tender_id: searchTender.id,
-  });
+  return;
 };
 
 // GET ALL WORKES
