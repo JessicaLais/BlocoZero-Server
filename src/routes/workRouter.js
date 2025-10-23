@@ -6,6 +6,7 @@ import multer from "multer";
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 
+//npm install express multer sqlite3
 //Create new Work
 router.post("/register", upload.single("photo"), workController.createWork);
 

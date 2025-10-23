@@ -57,6 +57,7 @@ model Work {
   photo         Bytes
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  isActive      Boolean
 
   enterprise        Enterprise         @relation(fields: [id_entreprise], references: [id_entreprise])
   resources         Resource[]

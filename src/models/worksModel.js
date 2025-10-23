@@ -1,9 +1,12 @@
 import prisma from "./connectionModel.js";
 
-export const createWork = async ({ data }) => {
+export const createWork = async ({ data, file }) => {
+  console.log(data);
   return await prisma.work.create({
     data: {
-      id_enterprise: data.id_enterprise,
+      id_entreprise: data.id_entreprise,
+      id_manager: data.id_manager,
+      id_tender: data.id_tender,
       title: data.title,
       cnpj: data.cnpj,
       address: data.address,
@@ -11,8 +14,9 @@ export const createWork = async ({ data }) => {
       budget: data.budget,
       start_time: data.start_time,
       end_time: data.end_time,
-      description: data.description,
-      photo_url: data.photo_url,
+      describe: data.describe,
+      photo: file,
+      isActive: true,
     },
   });
 };
