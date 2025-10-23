@@ -7,7 +7,6 @@ export const createWork = async (req, res) => {
     const data = req.body;
     const fileBuffer = fs.readFileSync(file.path);
     const createWork = await workServices.createWork({ data, fileBuffer });
-
     fs.unlinkSync(file.path); // Remove o arquivo temporário após a leitura
     res.status(200).json({ response: "success" });
   } catch (error) {
