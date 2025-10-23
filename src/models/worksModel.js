@@ -21,23 +21,24 @@ export const createWork = async ({ data, file }) => {
   });
 };
 
-export const createWorkTender = async ({ work_id, tender_id }) => {
-  return await prisma.workTender.create({
-    data: {
-      id_work: work_id,
-      id_tender: tender_id,
-    },
-  });
-};
-
 export const getAllWorks = async ({ enterprise_id }) => {
-  return await prisma.work.findMany({
+  return prisma.work.findMany({
     where: {
-      id_enterprise: enterprise_id,
+      id_entreprise: enterprise_id,
     },
   });
 };
 
+export const getPhotosByWorkId = async ({ id }) => {
+  return prisma.work.findUnique({
+    where: {
+      id_work: id,
+    },
+    select: {
+      photo: true,
+    },
+  });
+};
 export const getAllWorkTender = async ({ tender_id }) => {
   return prisma.workTender.findMany({
     where: {

@@ -10,8 +10,10 @@ const upload = multer({ dest: "uploads/" });
 //Create new Work
 router.post("/register", upload.single("photo"), workController.createWork);
 
-//List all works (3) (MANAGER)
+//List all works (3)
 router.get("/list/:enterprise_id", workController.getAllWorks);
+
+router.get("/photo/:id", workController.getPhotosByWorkId);
 
 //List all works by page number (MANAGER)
 router.get(

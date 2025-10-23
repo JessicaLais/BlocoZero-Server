@@ -20,6 +20,18 @@ export const getAllWorks = async (req, res) => {
   res.status(200).json(works);
 };
 
+export const getPhotosByWorkId = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const photo = await workServices.getPhotosByWorkId({ id });
+    const photoBuffer = Buffer.from(photo.photo); // converte para Buffer
+
+    res.set("Content-Type", "image/jpeg"); // ou "image/png" conforme sua imagem
+    res.send(photoBuffer);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 export const getWorksPageId = async (req, res) => {
   try {
     const pageNumber = req.params.pageNumber;

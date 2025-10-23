@@ -61,6 +61,7 @@ export default class Work {
       budget: this.budget,
       start_time: this.start_time,
       end_time: this.end_time,
+      isActive: this.isActive,
     };
   };
 }

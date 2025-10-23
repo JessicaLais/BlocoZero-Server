@@ -37,8 +37,10 @@ export const createWork = async ({ data, fileBuffer }) => {
 // GET ALL WORKES
 export const getAllWorks = async ({ enterprise_id }) => {
   enterprise_id = Number(enterprise_id);
+  console.log(enterprise_id);
 
   const allWorks = await workModel.getAllWorks({ enterprise_id });
+  console.log(allWorks);
   const works = allWorks
     .slice(0, limit)
     .map((item) => new Work(item).smallInformation());
@@ -49,6 +51,16 @@ export const getAllWorks = async ({ enterprise_id }) => {
     };
   }
   return { works, page: "1 of 1" };
+};
+
+export const getPhotosByWorkId = async ({ id }) => {
+  id = Number(id);
+  const photo = await workModel.getPhotosByWorkId({ id });
+  if (!photo) {
+    throw new Error("Photo not found");
+  }
+
+  return photo;
 };
 
 //Get workes by number page
