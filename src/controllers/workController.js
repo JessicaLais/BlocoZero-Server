@@ -10,6 +10,7 @@ export const createWork = async (req, res) => {
     fs.unlinkSync(file.path); // Remove o arquivo temporário após a leitura
     res.status(200).json({ response: "success" });
   } catch (error) {
+    fs.unlinkSync(file.path);
     res.status(400).json({ error: error.message });
   }
 };
@@ -46,32 +47,6 @@ export const getWorksPageId = async (req, res) => {
   }
 };
 
-export const getAllWorkTender = async (req, res) => {
-  try {
-    const tender_Id = req.params.tender_id;
-    const works = await workServices.getAllWorkTender({
-      tender_Id,
-    });
-    res.status(200).json({ works });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-export const getWorksTenderPageId = async (req, res) => {
-  try {
-    const pageNumber = req.params.pageNumber;
-    const tender_Id = req.params.tender_id;
-    const works = await workServices.getWorksTenderPageId({
-      pageNumber,
-      tender_Id,
-    });
-    res.status(200).json({ works });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
 export const getSpecificWork = async (req, res) => {
   try {
     const id = req.params.id;
@@ -85,9 +60,16 @@ export const getSpecificWork = async (req, res) => {
 
 export const updateWorkById = async (req, res) => {
   try {
-    const work_id = req.params.id;
+    const id = req.params.id;
     const data = req.body;
-    const updateWork = await workServices.updateWorkById({ work_id, data });
+    const file = req.file;
+    const fileBuffer = fs.readFileSync(file.path);
+    const updateWork = await workServices.updateWorkById({
+      id,
+      data,
+      file: fileBuffer,
+    });
+    fs.unlinkSync(file.path);
     res.status(200).json({ response: "sucess" });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -96,8 +78,8 @@ export const updateWorkById = async (req, res) => {
 
 export const deleteWorkById = async (req, res) => {
   try {
-    const work_id = req.params.id;
-    const deleteWork = await workServices.deleteWorkById({ work_id });
+    const id = req.params.id;
+    const deleteWork = await workServices.deleteWorkById({ id });
     res.status(200).json({ response: "sucess" });
   } catch (error) {
     res.status(400).json({ error: error.message });

@@ -21,20 +21,18 @@ router.get(
   workController.getWorksPageId
 );
 
-router.get("/list/tender/:tender_id", workController.getAllWorkTender);
-
-router.get(
-  "/list/tender/:tender_id/page/:pageNumber",
-  workController.getWorksTenderPageId
-);
 //List specific work by id
-router.get("/list/specificWork/:id", workController.getSpecificWork);
+router.get("/specific/:id", workController.getSpecificWork);
 
 //CALCULAR NÚMERO DE FUNCIONÁRIOS ATIVOS EM UMA OBRA
 
 //Update specific work by id
-router.put("/updateWork/:id", verifyBody, workController.updateWorkById);
+router.put(
+  "/update/:id",
+  upload.single("photo"),
+  workController.updateWorkById
+);
 
 //Delete specific work by id (desactived)
-router.delete("/deleteWork/:id", workController.deleteWorkById);
+router.delete("/delete/:id", workController.deleteWorkById);
 export default router;

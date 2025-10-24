@@ -1,7 +1,6 @@
 import prisma from "./connectionModel.js";
 
 export const createWork = async ({ data, file }) => {
-  console.log(data);
   return await prisma.work.create({
     data: {
       id_entreprise: data.id_entreprise,
@@ -39,52 +38,24 @@ export const getPhotosByWorkId = async ({ id }) => {
     },
   });
 };
-export const getAllWorkTender = async ({ tender_id }) => {
-  return prisma.workTender.findMany({
-    where: {
-      id_tender: tender_id,
-    },
-    include: {
-      work: true,
-    },
-  });
-};
 
 export const getSpecificWork = async ({ id }) => {
   return await prisma.work.findUnique({
     where: {
       id_work: id,
     },
-    include: {
-      workTenders: {
-        include: {
-          tender: {
-            include: {
-              user: true, // dados do encarregado
-            },
-          },
-        },
-      },
-    },
   });
 };
 
-export const getRelationWorkAndUser = ({ tender_id, work_id }) => {
-  return prisma.workTender.findFirst({
-    where: {
-      id_tender: tender_id,
-      id_work: work_id,
-    },
-  });
-};
-
-export const updateWorkById = ({ data, work_id }) => {
+export const updateWorkById = ({ data, work_id, file }) => {
   return prisma.work.update({
     where: {
       id_work: work_id,
     },
     data: {
-      id_enterprise: data.id_enterprise,
+      id_entreprise: data.id_entreprise,
+      id_manager: data.id_manager,
+      id_tender: data.id_tender,
       title: data.title,
       cnpj: data.cnpj,
       address: data.address,
@@ -92,15 +63,16 @@ export const updateWorkById = ({ data, work_id }) => {
       budget: data.budget,
       start_time: data.start_time,
       end_time: data.end_time,
-      description: data.description,
-      photo_url: data.photo_url,
+      describe: data.describe,
+      photo: file,
+      isActive: true,
     },
   });
 };
 
-export const deleteWorkById = async ({ work_id }) => {
+export const deleteWorkById = async ({ id }) => {
   return prisma.work.update({
-    where: { id_work: work_id },
+    where: { id_work: id },
     data: {
       isActive: false,
     },
