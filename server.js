@@ -10,6 +10,7 @@ import damagedEquipamentRouter from "./src/routes/damagedEquipamentRouter.js";
 import budgetRouter from "./src/routes/budgetRouter.js";
 import enterpriseRouter from "./src/routes/enterpriseRouter.js";
 import typeRouter from "./src/routes/typeRouter.js";
+import categoryRouter from "./src/routes/categoryRouter.js";
 
 import cors from "cors";
 import * as middlewares from "./src/middlewares/verifyMiddlewares.js";
@@ -36,6 +37,7 @@ app.use("/schedule", scheduleRouter);
 app.use("/damagedEquipament", damagedEquipamentRouter);
 app.use("/enterprise", enterpriseRouter);
 app.use("/type", typeRouter);
+app.use("/category", categoryRouter);
 
 //middlewares
 app.use(middlewares.verifyRoutes);
