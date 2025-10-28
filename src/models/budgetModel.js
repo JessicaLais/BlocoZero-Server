@@ -1,49 +1,66 @@
 import prisma from "./connectionModel.js";
 
 export const createBudgetLabor = async ({ data }) => {
-  return await prisma.budget.create({
+  return prisma.resource.create({
     data: {
+      id_work: data.id_work,
+      id_category: data.id_category,
+      id_type: data.id_type,
       code: data.code,
       name: data.name,
-      user_id: data.user_id,
-      type: data.type,
-      category: data.category,
       unitMeasure: data.unitMeasure,
-      cost: data.cost || 0,
-      stockQuantity: data.stockQuantity || 0,
-      hoursWorked: data.hoursWorked || 0,
-      costHours: data.costHours || 0,
-      extraHours: data.extraHours || 0,
-      total: data.total || 0,
+      cost: data.cost,
+      stockQuantity: data.stockQuantity,
+      hours: data.hours,
+      extraHours: data.extraHours,
+      total: data.total,
       allocatedStage: data.allocatedStage,
-      function: data.userFunction,
+      Userfunction: data.Userfunction,
+      weightLength: data.weightLength,
     },
   });
 };
 
-export const createRelationBudgetManagerWork = async ({
-  id_manager,
-  id_budget,
-  id_work,
-}) => {
-  return await prisma.budgetManagerWork.create({
-    data: {
-      id_manager,
-      id_work,
-      id_budget,
-      actionType: "create",
-    },
-  });
+export const listAllBudget = async () => {
+  return prisma.resource.findMany();
 };
 
-export const getRelationBudgetManagerWorkByWorkId = async ({ id_work }) => {
-  return await prisma.budgetManagerWork.findMany({
+export const getBudgetById = async ({ id }) => {
+  return prisma.resource.findFirst({
     where: {
-      id_work,
+      id_budget: id,
     },
-    include: {
-      budget: true,
-      manager: true,
+  });
+};
+
+export const updateBudget = async ({ id, data }) => {
+  return prisma.resource.update({
+    where: {
+      id_budget: id,
+    },
+    data: {
+      id_work: data.id_work,
+      id_category: data.id_category,
+      id_type: data.id_type,
+      code: data.code,
+      name: data.name,
+      unitMeasure: data.unitMeasure,
+      cost: data.cost,
+      stockQuantity: data.stockQuantity,
+      hours: data.hours,
+      extraHours: data.extraHours,
+      total: data.total,
+      allocatedStage: data.allocatedStage,
+      Userfunction: data.Userfunction,
+      weightLength: data.weightLength,
+    },
+  });
+};
+
+export const deleteBudget = async ({ id }) => {
+  return prisma.resource.delete({
+    where: {
+      id_budget: id,
     },
   });
 };

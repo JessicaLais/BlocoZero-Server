@@ -73,7 +73,7 @@ export const updateWorkById = ({ data, work_id, file }) => {
 export const deleteWorkById = async ({ id }) => {
   return prisma.work.update({
     where: { id_work: id },
-    data: {
+    data: { 
       isActive: false,
     },
   });

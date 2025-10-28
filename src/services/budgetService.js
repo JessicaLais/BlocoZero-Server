@@ -1,5 +1,8 @@
 import { getUserId } from "../models/usersModel.js";
 import { getSpecificWork } from "../models/worksModel.js";
+import { getById } from "../models/typeModel.js";
+import { searchCategoryById } from "../models/categoryModel.js";
+import { getStageById } from "../models/stageModel.js";
 
 import * as budgetModel from "../models/budgetModel.js";
 
@@ -7,56 +10,53 @@ import Budget from "../entitys/budgetEntity.js";
 import User from "../entitys/userEntity.js";
 
 export const createBudgetLabor = async ({ data }) => {
-  const searchWork = await getSpecificWork({ id: data.work_id });
+  const searchEmployee = await getUserId({ id: data.employee_id });
+  if (!searchEmployee) {
+    throw new Error("User not found");
+  }
+  let newData = {
+    code: "TRAB - " + searchEmployee.id_user,
+    name: searchEmployee.name,
+    Userfunction: data.function,
+  };
 
+  const searchType = await getById({ id: data.id_type });
+  if (!searchType || searchType.name !== "Trabalho") {
+    throw new Error("Type not found or type incorret");
+  }
+  newData.id_type = searchType.id_type;
+
+  const searchCategory = await searchCategoryById({
+    id_category: data.id_category,
+  });
+  if (!searchCategory || !searchCategory.name.includes("Trabalho")) {
+    throw new Error("Category not found or category incorret");
+  }
+  newData.id_category = searchCategory.id_category;
+
+  const searchStage = await getStageById({ id: data.allocated_stage_id });
+  if (!searchStage) {
+    throw new Error("Stage not found");
+  }
+  newData.allocatedStage = searchStage.name;
+  const searchWork = await getSpecificWork({ id: data.id_work });
   if (!searchWork) {
     throw new Error("Work not found");
   }
-  console.log(searchWork);
+  newData.id_work = searchWork.id_work;
+  newData.cost = searchEmployee.hourlyRate;
 
-  const searchManager = await getUserId({ id: data.manager_id });
-
-  if (!searchManager || !searchManager.userFunction === "manager") {
-    throw new Error("Manager not found or invalid function type");
+  if (data.hours_worked <= 8) {
+    newData.hours = data.hours_worked;
+  } else {
+    newData.hours = 8;
+    newData.extraHours = data.hours_worked - 8;
   }
+  newData.total = searchEmployee.hourlyRate * data.hours_worked;
 
-  const searchEmployee = await getUserId({ id: data.employee_id });
-  if (!searchEmployee || searchEmployee.userFunction === "manager") {
-    throw new Error("Employee not found or invalid function type");
-  }
+  const budget = new Budget(newData);
 
-  let differenceHoursExtra = 0;
-  if (data.hoursWorked > 8) {
-    differenceHoursExtra = data.hoursWorked - 8;
-  }
-  const totalCost = data.hoursWorked * searchEmployee.hourlyRate;
-  const budgetData = {
-    code: "TRB - ",
-    name: searchEmployee.name,
-    user_id: searchEmployee.id,
-    type: "Trabalho",
-    category: "Trabalho de instalação",
-    unitMeasure: "H",
-    cost: "",
-    stockQuantity: "",
-    hoursWorked: data.hoursWorked,
-    costHours: searchEmployee.hourlyRate,
-    extraHours: differenceHoursExtra,
-    total: totalCost,
-    allocatedStage: data.allocatedStage,
-    userFunction: searchEmployee.userFunction,
-  };
-
-  const budget = await budgetModel.createBudgetLabor({
-    data: new Budget(budgetData),
-  });
-
-  console.log(searchWork);
-  return await budgetModel.createRelationBudgetManagerWork({
-    id_manager: searchManager.id,
-    id_budget: budget.id_budget,
-    id_work: searchWork.id_work,
-  });
+  return budgetModel.createBudgetLabor({ data: budget });
 
   //Precisa fazer a lógica de buscar a etapa da obra para preencher category e allocatedStage,
   //const newBudgetLabor = new Budget({ ...data });
@@ -79,24 +79,72 @@ export const createBudgetLabor = async ({ data }) => {
 }
 */
 
-export const listBudgetsByWorkId = async ({ id }) => {
-  const searchWork = await getSpecificWork({ id: Number(id) });
+export const listAllBudget = async () => {
+  const listAllBudget = await budgetModel.listAllBudget();
+  return listAllBudget.map((item) => new Budget(item));
+};
+
+export const updateBudget = async ({ id, data }) => {
+  id = Number(id);
+  const searchBudget = await budgetModel.getBudgetById({ id });
+  if (!searchBudget) {
+    throw new Error("Budget not found");
+  }
+  const searchEmployee = await getUserId({ id: data.employee_id });
+  if (!searchEmployee) {
+    throw new Error("User not found");
+  }
+  let newData = {
+    code: "TRAB - " + searchEmployee.id_user,
+    name: searchEmployee.name,
+    Userfunction: data.function,
+  };
+
+  const searchType = await getById({ id: data.id_type });
+  if (!searchType || searchType.name !== "Trabalho") {
+    throw new Error("Type not found or type incorret");
+  }
+  newData.id_type = searchType.id_type;
+
+  const searchCategory = await searchCategoryById({
+    id_category: data.id_category,
+  });
+  if (!searchCategory || !searchCategory.name.includes("Trabalho")) {
+    throw new Error("Category not found or category incorret");
+  }
+  newData.id_category = searchCategory.id_category;
+
+  const searchStage = await getStageById({ id: data.allocated_stage_id });
+  if (!searchStage) {
+    throw new Error("Stage not found");
+  }
+  newData.allocatedStage = searchStage.name;
+  const searchWork = await getSpecificWork({ id: data.id_work });
   if (!searchWork) {
     throw new Error("Work not found");
   }
-  const getRelations = await budgetModel.getRelationBudgetManagerWorkByWorkId({
-    id_work: searchWork.id_work,
-  });
-  let total = getRelations.reduce((sum, { budget }) => {
-    return sum + budget.total;
-  }, 0);
-  console.log(total);
-  return getRelations.map(({ budget, manager, ...relation }) => {
-    return {
-      ...relation,
-      budget: new Budget(budget),
-      manager: new User(manager),
-      totalBudgetByWork: total,
-    };
-  });
+  newData.id_work = searchWork.id_work;
+  newData.cost = searchEmployee.hourlyRate;
+
+  if (data.hours_worked <= 8) {
+    newData.hours = data.hours_worked;
+  } else {
+    newData.hours = 8;
+    newData.extraHours = data.hours_worked - 8;
+  }
+  newData.total = searchEmployee.hourlyRate * data.hours_worked;
+
+  const budget = new Budget(newData);
+
+  return budgetModel.updateBudget({ data: budget, id });
+};
+
+export const deleteBudget = async ({ id }) => {
+  id = Number(id);
+  const searchBudget = await budgetModel.getBudgetById({ id });
+  if (!searchBudget) {
+    throw new Error("Budget not found");
+  }
+
+  return budgetModel.deleteBudget({ id });
 };

@@ -10,6 +10,7 @@ const limit = 5;
 
 //CREATE WORK
 export const createWork = async ({ data, fileBuffer }) => {
+  console.log(data);
   const searchEnterprise = await findEntrepriseById({
     id: Number(data["id_entreprise"]),
   });

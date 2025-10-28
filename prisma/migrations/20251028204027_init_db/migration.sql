@@ -23,6 +23,7 @@ CREATE TABLE "User" (
     "name" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
+    "isActive" BOOLEAN NOT NULL,
     CONSTRAINT "User_enterprise_id_fkey" FOREIGN KEY ("enterprise_id") REFERENCES "Enterprise" ("id_entreprise") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -40,24 +41,23 @@ CREATE TABLE "Work" (
     "start_time" DATETIME NOT NULL,
     "end_time" DATETIME NOT NULL,
     "describe" TEXT NOT NULL,
-    "photo_url" TEXT NOT NULL,
+    "photo" BLOB NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
+    "isActive" BOOLEAN NOT NULL,
     CONSTRAINT "Work_id_entreprise_fkey" FOREIGN KEY ("id_entreprise") REFERENCES "Enterprise" ("id_entreprise") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
 CREATE TABLE "Stage" (
     "id_stage" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "id_work" INTEGER,
     "name" TEXT NOT NULL,
     "substage" TEXT NOT NULL,
     "progress" REAL NOT NULL,
     "expStartDate" DATETIME NOT NULL,
     "expEndDate" DATETIME NOT NULL,
     "exeStartDate" DATETIME,
-    "exeEndDate" DATETIME,
-    CONSTRAINT "Stage_id_work_fkey" FOREIGN KEY ("id_work") REFERENCES "Work" ("id_work") ON DELETE SET NULL ON UPDATE CASCADE
+    "exeEndDate" DATETIME
 );
 
 -- CreateTable
@@ -75,7 +75,7 @@ CREATE TABLE "Resource" (
     "extraHours" REAL NOT NULL,
     "total" REAL NOT NULL,
     "allocatedStage" TEXT NOT NULL,
-    "function" TEXT NOT NULL,
+    "Userfunction" TEXT NOT NULL,
     "weightLength" REAL NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
@@ -205,3 +205,6 @@ CREATE TABLE "Category" (
     "id_category" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Enterprise_cnpj_key" ON "Enterprise"("cnpj");

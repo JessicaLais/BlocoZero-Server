@@ -2,15 +2,24 @@ import * as workServices from "../services/workServices.js";
 import fs from "fs";
 
 export const createWork = async (req, res) => {
+  let file;
   try {
-    const file = req.file;
+    file = req.file;
     const data = req.body;
+
+    if (!file) {
+      throw new Error("Arquivo não enviado");
+    }
+
     const fileBuffer = fs.readFileSync(file.path);
-    const createWork = await workServices.createWork({ data, fileBuffer });
-    fs.unlinkSync(file.path); // Remove o arquivo temporário após a leitura
+    await workServices.createWork({ data, fileBuffer });
+
+    fs.unlinkSync(file.path);
     res.status(200).json({ response: "success" });
   } catch (error) {
-    fs.unlinkSync(file.path);
+    if (file && file.path) {
+      fs.unlinkSync(file.path);
+    }
     res.status(400).json({ error: error.message });
   }
 };

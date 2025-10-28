@@ -61,7 +61,6 @@ model Work {
 
   enterprise        Enterprise         @relation(fields: [id_entreprise], references: [id_entreprise])
   resources         Resource[]
-  stages            Stage[]
   physicalSchedules PhysicalSchedule[]
   financialSchedules FinancialSchedule[]
   progressReports   ProgressReport[]
@@ -69,7 +68,6 @@ model Work {
 
 model Stage {
   id_stage     Int       @id @default(autoincrement())
-  id_work      Int?
   name         String
   substage     String
   progress     Float
@@ -77,9 +75,6 @@ model Stage {
   expEndDate   DateTime
   exeStartDate DateTime?
   exeEndDate   DateTime?
-
-  // relação com Work (corrigida)
-  work Work? @relation(fields: [id_work], references: [id_work])
 
   physicalSchedules  PhysicalSchedule[]
   financialSchedules FinancialSchedule[]
@@ -101,7 +96,7 @@ model Resource {
   extraHours     Float
   total          Float
   allocatedStage String
-  function       String
+  Userfunction       String
   weightLength   Float
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
