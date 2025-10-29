@@ -12,7 +12,7 @@ import budgetRouter from "./src/routes/budgetRouter.js";
 import enterpriseRouter from "./src/routes/enterpriseRouter.js";
 import typeRouter from "./src/routes/typeRouter.js";
 import categoryRouter from "./src/routes/categoryRouter.js";
-
+import stockRouter from "./src/routes/stockRouter.js";
 import cors from "cors";
 import * as middlewares from "./src/middlewares/verifyMiddlewares.js";
 
@@ -40,7 +40,7 @@ app.use("/stage", stageRouter);
 app.use("/enterprise", enterpriseRouter);
 app.use("/type", typeRouter);
 app.use("/category", categoryRouter);
-
+app.use("/stock", stockRouter);
 //middlewares
 app.use(middlewares.verifyRoutes);
 
