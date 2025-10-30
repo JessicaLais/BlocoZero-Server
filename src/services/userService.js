@@ -67,7 +67,7 @@ export const loginUser = async ({ email, password }) => {
     throw new Error("Invalid password or email");
   }
 
-  return;
+  return userData.userFunction;
 };
 
 export const updateUser = async ({ data, id }) => {
