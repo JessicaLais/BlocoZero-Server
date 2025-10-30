@@ -37,10 +37,9 @@ export const createWork = async ({ data, fileBuffer }) => {
 // GET ALL WORKES
 export const getAllWorks = async ({ enterprise_id }) => {
   enterprise_id = Number(enterprise_id);
-  console.log(enterprise_id);
 
   const allWorks = await workModel.getAllWorks({ enterprise_id });
-  console.log(allWorks);
+
   const works = allWorks
     .slice(0, limit)
     .map((item) => new Work(item).smallInformation());
@@ -66,12 +65,13 @@ export const getPhotosByWorkId = async ({ id }) => {
 //Get workes by number page
 export const getWorksPageId = async ({ pageNumber, enterprise_id }) => {
   enterprise_id = Number(enterprise_id);
+  const limit = 10; // defina ou use variável global, se já existir
   const startIndex = (Number(pageNumber) - 1) * limit;
   const endIndex = startIndex + limit;
+
   const allWorks = await workModel.getAllWorks({ enterprise_id });
-  const works = allWorks
-    .slice(startIndex, endIndex)
-    .map((work) => new Work(work).smallInformation());
+
+  // Validação de página
   if (
     Math.ceil(allWorks.length / limit) < Number(pageNumber) ||
     Number(pageNumber) < 1
@@ -79,9 +79,27 @@ export const getWorksPageId = async ({ pageNumber, enterprise_id }) => {
     throw new Error("Page number not exist");
   }
 
+  // Pega as obras da página e adiciona fotos em base64
+  const works = await Promise.all(
+    allWorks.slice(startIndex, endIndex).map(async (item) => {
+      const work = new Work(item).smallInformation();
+
+      // Busca fotos
+      const photoData = await workModel.getPhotosByWorkId({ id: item.id_work });
+
+      if (photoData && photoData.photo) {
+        work.photo = photoData.photo.toString("base64");
+      } else {
+        work.photo = null;
+      }
+
+      return work;
+    })
+  );
+
   return {
     works,
-    page: pageNumber + " of " + Math.ceil(allWorks.length / limit),
+    page: `${pageNumber} of ${Math.ceil(allWorks.length / limit)}`,
   };
 };
 

@@ -13,6 +13,7 @@ export default class Work {
     end_time,
     describe,
     isActive,
+    photo,
   }) {
     this.id_work = id_work || null;
     this.id_entreprise = Number(id_entreprise);
@@ -27,6 +28,7 @@ export default class Work {
     this.end_time = new Date(end_time);
     this.describe = describe;
     this.isActive = isActive;
+    this.photo = photo;
 
     this.validate();
   }
@@ -62,6 +64,7 @@ export default class Work {
       start_time: this.start_time,
       end_time: this.end_time,
       isActive: this.isActive,
+      photo: this.photo,
     };
   };
 }
