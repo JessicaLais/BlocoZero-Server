@@ -4,16 +4,22 @@ import * as stockController from "../controllers/stockController.js";
 
 const router = express.Router();
 
-router.get("/", stockController.getAllStockItems);
+// Listar todos os itens do estoque
+router.get("/stockGetAll", stockController.getAllStockItems);
 
-router.get("/disponiveis", stockController.getAvailableStockItems);
+// Listar itens disponíveis (em estoque > 0)
+router.get("/stockGetAvailable", stockController.getAvailableStockItems);
 
-router.get("/:id", stockController.getStockItemById);
+// Buscar item por ID
+router.get("/stockGetById/:id", stockController.getStockItemById);
 
-router.post("/", verifyBody, stockController.createStockItem);
+// Criar novo item no estoque
+router.post("/stockCreate", verifyBody, stockController.createStockItem);
 
-router.put("/:id", verifyBody, stockController.updateStockItem);
+// Atualizar item existente
+router.put("/stockUpdate/:id", verifyBody, stockController.updateStockItem);
 
-router.delete("/:id", stockController.deleteStockItem);
+// Deletar item do estoque
+router.delete("/stockDelete/:id", stockController.deleteStockItem);
 
 export default router;
