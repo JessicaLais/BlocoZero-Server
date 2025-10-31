@@ -41,6 +41,7 @@ app.use("/enterprise", enterpriseRouter);
 app.use("/type", typeRouter);
 app.use("/category", categoryRouter);
 app.use("/stock", stockRouter);
+
 //middlewares
 app.use(middlewares.verifyRoutes);
 

@@ -12,13 +12,18 @@ export const createStockItem = async ({ data }) => {
     throw new Error("Item with the same name and code already exists");
   }
 
-  const fullStockData = {
-    ...data,
-    stockQuantity: data.stockQuantity !== undefined ? data.stockQuantity : 0,
-    actualQuantity: data.actualQuantity !== undefined ? data.actualQuantity : 0,
-    recentInflow: data.recentInflow !== undefined ? data.recentInflow : 0,
-    recentOutflow: data.recentOutflow !== undefined ? data.recentOutflow : 0,
-  };
+const fullStockData = {
+  ...data,
+  stockQuantity: data.stockQuantity ?? 0,
+  actualQuantity: data.actualQuantity ?? data.stockQuantity ?? 0,
+  recentInflow: 0,
+  recentOutflow: 0,
+  cumulativeInflow: 0,
+  cumulativeOutflow: 0,
+  createdAt: new Date(),
+  updatedAt: new Date()
+};
+
 
   const stock = new Stock(fullStockData);
   const createStockDB = await stockModel.createStockItem({ data: stock });
