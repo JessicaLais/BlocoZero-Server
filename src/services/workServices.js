@@ -9,37 +9,45 @@ import Work from "../entitys/workEntity.js";
 const limit = 5;
 
 //CREATE WORK
-export const createWork = async ({ data, fileBuffer }) => {
-  console.log(data);
-  const searchEnterprise = await findEntrepriseById({
-    id: Number(data["id_entreprise"]),
-  });
+  export const createWork = async ({ data, fileBuffer }) => {
+    
+    const searchEnterprise = await findEntrepriseById({
+      id: Number(data["id_entreprise"]),
+    });
+    if (!searchEnterprise) {
+      throw new Error("Enterprise not found or not exist");
+    }
+    const id = Number(data["id_manager"])
 
-  if (!searchEnterprise) {
-    throw new Error("Enterprise not found or not exist");
-  }
-  const searchManager = await getUserId({ id: Number(data["id_manager"]) });
+    const searchManager = await getUserId({ id: Number(data["id_manager"]) });
+  
 
-  if (searchManager.userFunction !== "manager") {
-    throw new Error("User is not a manager");
-  }
-  const searchTender = await getUserId({ id: Number(data["id_tender"]) });
-  if (searchTender.userFunction !== "tender") {
-    throw new Error("User is not a tender");
-  }
-  const work = new Work(data);
+    if (searchManager.userFunction !== "manager") {
+      throw new Error("User is not a manager");
+    }
+    const searchTender = await getUserId({ id: Number(data["tender_id"]) });
+    
 
-  console.log(work);
 
-  return await workModel.createWork({ data: work, file: fileBuffer });
-};
+    if (searchTender.userFunction !== "tender") {
+      throw new Error("User is not a tender");
+    } 
+    
+    const work = new Work(data);
+
+  
+
+    return await workModel.createWork({ data: work, file: fileBuffer });
+    
+    
+  };
 
 // GET ALL WORKES
 export const getAllWorks = async ({ enterprise_id }) => {
   enterprise_id = Number(enterprise_id);
 
   const allWorks = await workModel.getAllWorks({ enterprise_id });
-
+ 
   const works = allWorks
     .slice(0, limit)
     .map((item) => new Work(item).smallInformation());
@@ -88,7 +96,7 @@ export const getWorksPageId = async ({ pageNumber, enterprise_id }) => {
       const photoData = await workModel.getPhotosByWorkId({ id: item.id_work });
 
       if (photoData && photoData.photo) {
-        work.photo = photoData.photo.toString("base64");
+        work.photo = photoData.photo
       } else {
         work.photo = null;
       }

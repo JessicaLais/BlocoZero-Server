@@ -34,9 +34,12 @@ export const allUsers = async ({ enterprise_id }) => {
 
 export const getUserId = async ({ id }) => {
   return await prisma.user.findUnique({
-    where: { id_user: id },
+    where: {
+      id_user: id,
+    },
   });
 };
+
 
 export const updateUser = async ({ data, id }) => {
   return await prisma.user.update({
