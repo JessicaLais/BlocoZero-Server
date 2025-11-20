@@ -56,7 +56,6 @@ export const getStageById = async ({ id }) => {
             id_stage: id, 
         },
         include: {
-            // Se necessário, inclua WorkStages, StageSubstages etc.
         }
     });
 };

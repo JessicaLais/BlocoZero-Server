@@ -1,4 +1,4 @@
-import * as scheduleModel from "../models/scheduleModel.js";
+/*import * as scheduleModel from "../models/scheduleModel.js";
 
 const MASTER_STAGES_LIST = [
     "Planejamento e Preparação",
@@ -196,4 +196,4 @@ export const getScheduleData = async (workId) => {
             totalAccumulated: totalAccumulated,
         }
     };
-};
+};*/

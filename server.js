@@ -5,7 +5,7 @@ import userRouter from "./src/routes/userRouter.js";
 import workRouter from "./src/routes/workRouter.js";
 //import itemsRouter from "./src/routes/itemsRouter.js";
 //import usagesRouter from "./src/routes/usagesRouter.js";
-import scheduleRouter from "./src/routes/scheduleRouter.js";
+//import scheduleRouter from "./src/routes/scheduleRouter.js";
 import stageRouter from "./src/routes/stageRouter.js";
 //import damagedEquipamentRouter from "./src/routes/damagedEquipamentRouter.js";
 import budgetRouter from "./src/routes/budgetRouter.js";
@@ -34,7 +34,7 @@ app.use("/budget", budgetRouter);
 
 //app.use("/items", itemsRouter);
 //app.use("/usages", usagesRouter);
-app.use("/schedule", scheduleRouter);
+//app.use("/schedule", scheduleRouter);
 app.use("/stage", stageRouter);
 //app.use("/damagedEquipament", damagedEquipamentRouter);
 app.use("/enterprise", enterpriseRouter);

@@ -1,4 +1,4 @@
-import * as scheduleService from "../services/scheduleService.js";
+/*import * as scheduleService from "../services/scheduleService.js";
 
 export const getSchedule = async (req, res) => {
     try {
@@ -12,4 +12,4 @@ export const getSchedule = async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-};
+};*/

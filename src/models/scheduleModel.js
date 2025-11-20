@@ -1,6 +1,4 @@
-// models/scheduleModel.js
-
-import prisma from "./connectionModel.js";
+/*import prisma from "./connectionModel.js";
 
 export const getScheduleDataByWorkId = async (workId) => {
     return await prisma.work.findUnique({
@@ -66,4 +64,4 @@ export const getExecutedStockData = async () => {
     });
 
     return { stockData };
-};
+};*/
