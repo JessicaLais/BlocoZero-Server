@@ -10,111 +10,131 @@ datasource db {
 
 model Enterprise {
   id_entreprise Int      @id @default(autoincrement())
-  name           String
-  cnpj           String @unique
-  address        String
-  phone          String
-  email          String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  name          String
+  cnpj          String   @unique
+  address       String
+  phone         String
+  email         String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   users User[]
   works Work[]
 }
 
 model User {
-  id_user       Int       @id @default(autoincrement())
-  enterprise_id Int
-  userFunction  String
-  email         String
-  password      String
-  phone         String
-  works         String
-  hourlyRate    Float
-  name          String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  isActive      Boolean
+  id_user           Int      @id @default(autoincrement())
+  enterprise_id     Int
+  userFunction      String
+  email             String
+  password          String
+  phone             String
+  works             String
+  hourlyRate        Float
+  name              String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  isActive          Boolean
 
-  enterprise     Enterprise     @relation(fields: [enterprise_id], references: [id_entreprise])
-  progressReports ProgressReport[]
-  budgetReports   BudgetReport[]
+  enterprise        Enterprise         @relation(fields: [enterprise_id], references: [id_entreprise])
+  progressReports   ProgressReport[]
+  budgetReports     BudgetReport[]
+  substageEmployes  SubstageEmploye[]
 }
 
 model Work {
-  id_work       Int       @id @default(autoincrement())
-  id_entreprise Int
-  id_manager    Int
-  id_tender     Int?
-  title         String
-  cnpj          String
-  address       String
-  cep           String
-  budget        Float
-  start_time    DateTime
-  end_time      DateTime
-  describe      String
-  photo         Bytes
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  isActive      Boolean
+  id_work           Int      @id @default(autoincrement())
+  id_entreprise     Int
+  id_manager        Int
+  id_tender         Int?
+  title             String
+  cnpj              String
+  address           String
+  cep               String
+  budget            Float
+  start_time        DateTime
+  end_time          DateTime
+  describe          String
+  photo             Bytes
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  isActive          Boolean
 
-  enterprise        Enterprise         @relation(fields: [id_entreprise], references: [id_entreprise])
-  resources         Resource[]
-  physicalSchedules PhysicalSchedule[]
-  financialSchedules FinancialSchedule[]
-  progressReports   ProgressReport[]
+  enterprise          Enterprise          @relation(fields: [id_entreprise], references: [id_entreprise])
+  resources           Resource[]
+  physicalSchedules   PhysicalSchedule[]
+  financialSchedules  FinancialSchedule[]
+  progressReports     ProgressReport[]
+  workStages          WorkStage[]
 }
 
 model Stage {
-  id_stage     Int       @id @default(autoincrement())
-  name         String
-  substage     String
-  progress     Float
-  expStartDate DateTime
-  expEndDate   DateTime
-  exeStartDate DateTime?
-  exeEndDate   DateTime?
+  id_stage          Int      @id @default(autoincrement())
+  name              String
+  progress          Float
+  expStartDate      DateTime
+  expEndDate        DateTime
+  exeStartDate      DateTime?
+  exeEndDate        DateTime?
 
   physicalSchedules  PhysicalSchedule[]
   financialSchedules FinancialSchedule[]
   progressReports    ProgressReport[]
   budgetReports      BudgetReport[]
+  workStages         WorkStage[]
+  stageSubstages     StageSubstage[]
+}
+
+model Substage {
+  id_substage       Int      @id @default(autoincrement())
+  name              String
+  expDuration       Float
+  progress          Float
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  stageSubstages    StageSubstage[]
+  substageEmployes  SubstageEmploye[]
+  substageStocks    SubstageStock[]
+  substageSchedules SubstageSchedule[]
+  financialSchedules FinancialSchedule[]
 }
 
 model Resource {
-  id_budget      Int      @id @default(autoincrement())
-  id_work        Int
-  id_category    Int
-  id_type        Int
-  code           String
-  name           String
-  unitMeasure    String
-  cost           Float
-  stockQuantity  Int
-  hours          Float
-  extraHours     Float
-  total          Float
-  allocatedStage String
-  Userfunction       String
-  weightLength   Float
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id_budget         Int      @id @default(autoincrement())
+  id_work           Int
+  id_category       Int
+  id_type           Int
+  code              String
+  name              String
+  unitMeasure       String
+  cost              Float
+  stockQuantity     Int
+  hours             Float
+  extraHours        Float
+  total             Float
+  allocatedStage    String
+  Userfunction      String
+  weightLength      Float
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+>>>>>>> Testes
 
-  work     Work     @relation(fields: [id_work], references: [id_work])
-  category Category @relation(fields: [id_category], references: [id_category])
-  type     Type     @relation(fields: [id_type], references: [id_type])
-  stocks   Stock[]
+  work              Work     @relation(fields: [id_work], references: [id_work])
+  category          Category @relation(fields: [id_category], references: [id_category])
+  type              Type     @relation(fields: [id_type], references: [id_type])
+  stocks            Stock[]
 }
 
 model PhysicalSchedule {
   id_physicalSchedule Int @id @default(autoincrement())
-  id_work  Int
-  id_stage Int
+  id_work             Int
+  id_stage            Int
 
-  work  Work  @relation(fields: [id_work], references: [id_work])
-  stage Stage @relation(fields: [id_stage], references: [id_stage])
-  financialSchedules FinancialSchedule[]
+  work                Work                @relation(fields: [id_work], references: [id_work])
+  stage               Stage               @relation(fields: [id_stage], references: [id_stage])
+  financialSchedules  FinancialSchedule[]
+  substageSchedules   SubstageSchedule[]
 }
 
 model FinancialSchedule {
@@ -122,13 +142,15 @@ model FinancialSchedule {
   id_work              Int
   id_stage             Int
   id_physicalSchedule  Int
+  id_substage          Int?  
   period               DateTime
   percentage           Float
   value                Float
 
-  work              Work              @relation(fields: [id_work], references: [id_work])
-  stage             Stage             @relation(fields: [id_stage], references: [id_stage])
-  physicalSchedule  PhysicalSchedule  @relation(fields: [id_physicalSchedule], references: [id_physicalSchedule])
+  work                 Work                @relation(fields: [id_work], references: [id_work])
+  stage                Stage               @relation(fields: [id_stage], references: [id_stage])
+  physicalSchedule     PhysicalSchedule    @relation(fields: [id_physicalSchedule], references: [id_physicalSchedule])
+  substage             Substage?           @relation(fields: [id_substage], references: [id_substage]) 
 }
 
 model EquipmentRequest {
@@ -138,8 +160,8 @@ model EquipmentRequest {
   name         String
   quantity     Int
 
-  type     Type     @relation(fields: [id_type], references: [id_type])
-  category Category @relation(fields: [id_category], references: [id_category])
+  type         Type     @relation(fields: [id_type], references: [id_type])
+  category     Category @relation(fields: [id_category], references: [id_category])
 }
 
 model Type {
@@ -153,72 +175,72 @@ model Type {
 }
 
 model ProgressReport {
-  id_progressReport Int @id @default(autoincrement())
-  id_work  Int
-  id_user  Int
-  id_stage Int
-  title           String
-  reportVersion   String
-  createdAt       DateTime @default(now())
-  substage        String
-  weather         String
-  startDate       DateTime?
-  endDate         DateTime?
-  note            String
-
-  work  Work  @relation(fields: [id_work], references: [id_work])
-  user  User  @relation(fields: [id_user], references: [id_user])
-  stage Stage @relation(fields: [id_stage], references: [id_stage])
-}
-
-model BudgetReport {
-  id_budgetReport   Int @id @default(autoincrement())
-  id_type           Int
+  id_progressReport Int      @id @default(autoincrement())
+  id_work           Int
   id_user           Int
   id_stage          Int
   title             String
-  name              String
-  referencePeriod   DateTime
+  reportVersion     String
   createdAt         DateTime @default(now())
-  overallPercentage Float
-  availableBalance  Float
-  plannedValue      Float
-  executedValue     Float
-  financialDeviation Float
+  weather           String
+  startDate         DateTime?
+  endDate           DateTime?
+  note              String
 
-  type  Type  @relation(fields: [id_type], references: [id_type])
-  user  User  @relation(fields: [id_user], references: [id_user])
-  stage Stage @relation(fields: [id_stage], references: [id_stage])
+  work              Work     @relation(fields: [id_work], references: [id_work])
+  user              User     @relation(fields: [id_user], references: [id_user])
+  stage             Stage    @relation(fields: [id_stage], references: [id_stage])
+}
+
+model BudgetReport {
+  id_budgetReport      Int      @id @default(autoincrement())
+  id_type              Int
+  id_user              Int
+  id_stage             Int
+  title                String
+  name                 String
+  referencePeriod      DateTime
+  createdAt            DateTime @default(now())
+  overallPercentage    Float
+  availableBalance     Float
+  plannedValue         Float
+  executedValue        Float
+  financialDeviation   Float
+
+  type                 Type     @relation(fields: [id_type], references: [id_type])
+  user                 User     @relation(fields: [id_user], references: [id_user])
+  stage                Stage    @relation(fields: [id_stage], references: [id_stage])
 }
 
 model Stock {
-  id_stock          Int @id @default(autoincrement())
-  id_budget         Int
-  id_type           Int
-  id_category       Int
-  code              String
-  name              String
-  unitMeasure       String
-  stockQuantity     Int
-  allocatedStage    String
-  weightLength      Float
-  recentInflow      Int
-  cumulativeInflow  Int
-  cumulativeOutflow Int
-  recentOutflow     Int
-  actualQuantity    Int
-  minQuantity       Int
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id_stock             Int      @id @default(autoincrement())
+  id_budget            Int
+  id_type              Int
+  id_category          Int
+  code                 String
+  name                 String
+  unitMeasure          String
+  stockQuantity        Int
+  allocatedStage       String
+  weightLength         Float
+  recentInflow         Int
+  cumulativeInflow     Int
+  cumulativeOutflow    Int
+  recentOutflow        Int
+  actualQuantity       Int
+  minQuantity          Int
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
-  resource Resource @relation(fields: [id_budget], references: [id_budget])
-  type     Type     @relation(fields: [id_type], references: [id_type])
-  category Category @relation(fields: [id_category], references: [id_category])
-  materialUsages MaterialUsage[]
+  resource             Resource         @relation(fields: [id_budget], references: [id_budget])
+  type                 Type             @relation(fields: [id_type], references: [id_type])
+  category             Category         @relation(fields: [id_category], references: [id_category])
+  materialUsages       MaterialUsage[]
+  substageStocks       SubstageStock[]
 }
 
 model MaterialUsage {
-  id_materialUsage Int @id @default(autoincrement())
+  id_materialUsage Int      @id @default(autoincrement())
   id_stock         Int
   employee_name    String
   material_name    String
@@ -226,7 +248,7 @@ model MaterialUsage {
   code             Int
   defect           String
 
-  stock Stock @relation(fields: [id_stock], references: [id_stock])
+  stock            Stock    @relation(fields: [id_stock], references: [id_stock])
 }
 
 model Category {
@@ -236,4 +258,71 @@ model Category {
   resources         Resource[]
   equipmentRequests EquipmentRequest[]
   stocks            Stock[]
+}
+
+model WorkStage {
+  workId       Int      @map("id_work")
+  stageId      Int      @map("id_stage")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  work         Work     @relation(fields: [workId], references: [id_work])
+  stage        Stage    @relation(fields: [stageId], references: [id_stage])
+  
+  @@id([workId, stageId])
+  @@map("work_stage")
+}
+
+model StageSubstage {
+  stageId       Int      @map("id_stage")
+  substageId    Int      @map("id_substage")
+  
+  stage         Stage    @relation(fields: [stageId], references: [id_stage])
+  substage      Substage @relation(fields: [substageId], references: [id_substage])
+  
+  @@id([stageId, substageId]) 
+  @@map("stage_substage")
+}
+
+model SubstageEmploye {
+  substageId    Int      @map("id_substage")
+  userId        Int      @map("id_user")
+  assignedAt    DateTime @default(now())
+  
+  substage      Substage @relation(fields: [substageId], references: [id_substage])
+  user          User     @relation(fields: [userId], references: [id_user]) 
+  
+  @@id([substageId, userId])
+  @@map("substage_employes")
+}
+
+model SubstageStock {
+  substageId          Int      @map("id_substage")
+  materialStockId     Int      @map("id_stock")
+  quantityUsed        Float    
+  
+  substage            Substage @relation(fields: [substageId], references: [id_substage])
+  materialStock       Stock    @relation(fields: [materialStockId], references: [id_stock])
+  
+  @@id([substageId, materialStockId])
+  @@map("substage_stock")
+}
+
+model SubstageSchedule {
+  id_substageSchedule Int       @id @default(autoincrement())
+  id_substage         Int
+  id_physicalSchedule Int
+  
+  expDuration         Float
+  expStartDate        DateTime
+  expEndDate          DateTime
+  
+  exeStartDate        DateTime? 
+  exeEndDate          DateTime? 
+  progress            Float     @default(0.0)
+  
+  substage            Substage          @relation(fields: [id_substage], references: [id_substage])
+  physicalSchedule    PhysicalSchedule  @relation(fields: [id_physicalSchedule], references: [id_physicalSchedule])
+  
+  @@map("substage_schedule")
 }
