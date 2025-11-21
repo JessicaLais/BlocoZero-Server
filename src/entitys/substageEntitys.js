@@ -1,5 +1,3 @@
-// entitys/substageEntity.js
-
 export default class Substage {
     constructor({ id_substage, name, expDuration, progress, createdAt, updatedAt }) {
         this.id = id_substage || null;
