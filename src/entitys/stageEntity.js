@@ -6,7 +6,7 @@ export default class Stage {
         this.expStartDate = expStartDate;
         this.expEndDate = expEndDate;
         this.exeStartDate = exeStartDate || null;
-        this.exeEndDate = exeEndDate || null;    
+        this.exeEndDate = exeEndDate || null; 
         this.validate();
     }
 

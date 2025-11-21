@@ -1,13 +1,14 @@
 /*import * as substageModel from "../models/substageModel.js";
-import Substage from "../entitys/substageEntity.js"; 
-import prisma from "../models/connectionModel.js"; // Importando o Prisma para operações de junção
+import Substage from "../entitys/substageEntitys.js";
+import prisma from "../models/connectionModel.js";
 
 export const registerInitialSchedule = async ({ workId, stageId, substageName, startDate, endDate }) => {
+    
     let substage = await substageModel.findSubstageByName({ name: substageName });
 
     if (!substage) {
         const durationMs = new Date(endDate).getTime() - new Date(startDate).getTime();
-        const expDuration = Math.ceil(durationMs / (1000 * 3600 * 24)); 
+        const expDuration = Math.ceil(durationMs / (1000 * 3600 * 24));
         
         const substageEntity = new Substage({
             name: substageName,
@@ -17,6 +18,19 @@ export const registerInitialSchedule = async ({ workId, stageId, substageName, s
 
         substage = await substageModel.createSubstage({ data: substageEntity });
     }
+
+    const existingRelations = await prisma.stageSubstage.findMany({
+        where: {
+            substageId: substage.id_substage,
+        }
+    });
+    
+    const isAlreadyMappedToDifferentStage = existingRelations.some(rel => rel.stageId !== stageId);
+    
+    if (isAlreadyMappedToDifferentStage) {
+         throw new Error(`The Substage "${substageName}" is already allocated to a different Stage in the system.`);
+    }
+
     const stageSubstage = await prisma.stageSubstage.create({
         data: {
             stageId: stageId,
@@ -25,7 +39,6 @@ export const registerInitialSchedule = async ({ workId, stageId, substageName, s
             expEndDate: new Date(endDate),
         }
     });
-
     await prisma.workStage.upsert({
         where: {
             workId_stageId: { workId: workId, stageId: stageId }
@@ -33,11 +46,12 @@ export const registerInitialSchedule = async ({ workId, stageId, substageName, s
         update: {},
         create: { workId: workId, stageId: stageId },
     });
-
+    
     return { 
-        substage: substage.name, 
+        substageName: substage.name, 
         stageId: stageId,
         startDate: stageSubstage.expStartDate,
         endDate: stageSubstage.expEndDate,
+        message: "Item de cronograma inicial criado e vinculado com sucesso."
     };
 };*/

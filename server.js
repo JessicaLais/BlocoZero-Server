@@ -1,17 +1,20 @@
 import express from "express";
 
-//ROUTERS
 import userRouter from "./src/routes/userRouter.js";
 import workRouter from "./src/routes/workRouter.js";
 //import itemsRouter from "./src/routes/itemsRouter.js";
 //import usagesRouter from "./src/routes/usagesRouter.js";
 //import scheduleRouter from "./src/routes/scheduleRouter.js";
 import stageRouter from "./src/routes/stageRouter.js";
+import substageRouter from "./src/routes/substageRouter.js"
 //import damagedEquipamentRouter from "./src/routes/damagedEquipamentRouter.js";
 import budgetRouter from "./src/routes/budgetRouter.js";
 import enterpriseRouter from "./src/routes/enterpriseRouter.js";
 import typeRouter from "./src/routes/typeRouter.js";
 import categoryRouter from "./src/routes/categoryRouter.js";
+
+//import stockRouter from "./src/routes/stockRouter.js";
+//import workScheduleRouter from "./src/routes/workScheduleRouter.js"
 
 import cors from "cors";
 import * as middlewares from "./src/middlewares/verifyMiddlewares.js";
@@ -36,6 +39,8 @@ app.use("/budget", budgetRouter);
 //app.use("/usages", usagesRouter);
 //app.use("/schedule", scheduleRouter);
 app.use("/stage", stageRouter);
+app.use("/substage", substageRouter);
+//app.use("/workSchedule", workScheduleRouter);
 //app.use("/damagedEquipament", damagedEquipamentRouter);
 app.use("/enterprise", enterpriseRouter);
 app.use("/type", typeRouter);

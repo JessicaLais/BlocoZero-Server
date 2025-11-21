@@ -3,6 +3,6 @@ import * as workScheduleController from "../controllers/workScheduleController.j
 
 const router = express.Router();
 
-router.post("/:workId/scheduleitem", workScheduleController.createInitialScheduleItem);
+router.post("/:workId/scheduleItem", workScheduleController.createInitialScheduleItem);
 
 export default router;*/

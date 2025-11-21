@@ -1,5 +1,5 @@
 import * as substageModel from "../models/substageModel.js";
-import Substage from "../entitys/substageEntity.js"; 
+import Substage from "../entitys/substageEntitys.js"; 
 
 export const createSubstage = async ({ data }) => {
     const substageExisting = await substageModel.findSubstageByName({
@@ -30,12 +30,11 @@ export const getSubstageById = async ({ id_substage }) => {
 };
 
 export const updateSubstage = async ({ data, id }) => {
-    id = Number(id);
+    id = Number(id); 
     const findSubstage = await substageModel.getSubstageById({ id }); 
     if (!findSubstage) {
         throw new Error("Substage not found");
     }
-
     const substageEntity = new Substage({ ...findSubstage, ...data, id_substage: id });
     
     return await substageModel.updateSubstage({ data: substageEntity, id: id });
