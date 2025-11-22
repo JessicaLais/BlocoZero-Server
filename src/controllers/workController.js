@@ -2,23 +2,27 @@ import * as workServices from "../services/workServices.js";
 import fs from "fs";
 
 export const createWork = async (req, res) => {
+  let file;
   try {
-    const file = req.file;
+    file = req.file;
     const data = req.body;
+    
+    if (!file) {
+      throw new Error("Arquivo não enviado");
+    }
+
     const fileBuffer = fs.readFileSync(file.path);
-    const createWork = await workServices.createWork({ data, fileBuffer });
-    fs.unlinkSync(file.path); // Remove o arquivo temporário após a leitura
+    await workServices.createWork({ data, fileBuffer });
+
+    fs.unlinkSync(file.path);
     res.status(200).json({ response: "success" });
   } catch (error) {
-    fs.unlinkSync(file.path);
+        
+    if (file && file.path) {
+      fs.unlinkSync(file.path);
+    }
     res.status(400).json({ error: error.message });
   }
-};
-
-export const getAllWorks = async (req, res) => {
-  const enterprise_id = req.params.enterprise_id;
-  const works = await workServices.getAllWorks({ enterprise_id });
-  res.status(200).json(works);
 };
 
 export const getPhotosByWorkId = async (req, res) => {
@@ -33,28 +37,88 @@ export const getPhotosByWorkId = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
 export const getWorksPageId = async (req, res) => {
   try {
-    const pageNumber = req.params.pageNumber;
-    const enterprise_id = req.params.enterprise_id;
+    const { pageNumber, enterprise_id } = req.params;
+
     const works = await workServices.getWorksPageId({
       pageNumber,
       enterprise_id,
     });
-    res.status(200).json({ works });
+   
+    const worksWithPhotos = works.works.map((work) => {
+      if (work.photo) {
+        const photoBuffer = Buffer.from(work.photo);
+        return {
+          ...work,
+          photo: photoBuffer.toString("base64"),
+        };
+      }
+      return work;
+    });
+
+    res.status(200).json({
+      ...works,
+      works: worksWithPhotos,
+    });
   } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erro ao buscar obras." });
+  }
+};
+
+
+export const getSpecificWork = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const specificWork = await workServices.getSpecificWork({ id });
+
+    if (!specificWork) {
+      return res.status(404).json({ error: "Obra não encontrada." });
+    }
+
+    // Corrigido: variável e nome consistente
+    let workWithPhoto = specificWork;
+    if (specificWork.photo) {
+      const photoBuffer = Buffer.from(specificWork.photo);
+      workWithPhoto = {
+        ...specificWork,
+        photo: photoBuffer.toString("base64"),
+      };
+    }
+
+    res.status(200).json({ work: workWithPhoto });
+  } catch (error) {
+    console.error(error);
     res.status(400).json({ error: error.message });
   }
 };
 
-export const getSpecificWork = async (req, res) => {
+export const getAllWorks = async (req, res) => {
   try {
-    const id = req.params.id;
-    const getSpecificWork = await workServices.getSpecificWork({ id });
+    const { enterprise_id } = req.params;
+    const works = await workServices.getAllWorks({ enterprise_id });
 
-    res.status(200).json({ getSpecificWork });
+    // Corrigido: usar "works.works" se o retorno for paginado
+    const worksWithPhotos = works.works.map((work) => {
+      if (work.photo) {
+        const photoBuffer = Buffer.from(work.photo);
+        return {
+          ...work,
+          photo: photoBuffer.toString("base64"),
+        };
+      }
+      return work;
+    });
+
+    res.status(200).json({
+      ...works,
+      works: worksWithPhotos,
+    });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: "Erro ao buscar obras." });
   }
 };
 

@@ -23,6 +23,7 @@ CREATE TABLE "User" (
     "name" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
+    "isActive" BOOLEAN NOT NULL,
     CONSTRAINT "User_enterprise_id_fkey" FOREIGN KEY ("enterprise_id") REFERENCES "Enterprise" ("id_entreprise") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -40,24 +41,32 @@ CREATE TABLE "Work" (
     "start_time" DATETIME NOT NULL,
     "end_time" DATETIME NOT NULL,
     "describe" TEXT NOT NULL,
-    "photo_url" TEXT NOT NULL,
+    "photo" BLOB NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
+    "isActive" BOOLEAN NOT NULL,
     CONSTRAINT "Work_id_entreprise_fkey" FOREIGN KEY ("id_entreprise") REFERENCES "Enterprise" ("id_entreprise") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
 CREATE TABLE "Stage" (
     "id_stage" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "id_work" INTEGER,
     "name" TEXT NOT NULL,
-    "substage" TEXT NOT NULL,
     "progress" REAL NOT NULL,
     "expStartDate" DATETIME NOT NULL,
     "expEndDate" DATETIME NOT NULL,
     "exeStartDate" DATETIME,
-    "exeEndDate" DATETIME,
-    CONSTRAINT "Stage_id_work_fkey" FOREIGN KEY ("id_work") REFERENCES "Work" ("id_work") ON DELETE SET NULL ON UPDATE CASCADE
+    "exeEndDate" DATETIME
+);
+
+-- CreateTable
+CREATE TABLE "Substage" (
+    "id_substage" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "expDuration" REAL NOT NULL,
+    "progress" REAL NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
 );
 
 -- CreateTable
@@ -75,7 +84,7 @@ CREATE TABLE "Resource" (
     "extraHours" REAL NOT NULL,
     "total" REAL NOT NULL,
     "allocatedStage" TEXT NOT NULL,
-    "function" TEXT NOT NULL,
+    "Userfunction" TEXT NOT NULL,
     "weightLength" REAL NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
@@ -99,12 +108,14 @@ CREATE TABLE "FinancialSchedule" (
     "id_work" INTEGER NOT NULL,
     "id_stage" INTEGER NOT NULL,
     "id_physicalSchedule" INTEGER NOT NULL,
+    "id_substage" INTEGER,
     "period" DATETIME NOT NULL,
     "percentage" REAL NOT NULL,
     "value" REAL NOT NULL,
     CONSTRAINT "FinancialSchedule_id_work_fkey" FOREIGN KEY ("id_work") REFERENCES "Work" ("id_work") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "FinancialSchedule_id_stage_fkey" FOREIGN KEY ("id_stage") REFERENCES "Stage" ("id_stage") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "FinancialSchedule_id_physicalSchedule_fkey" FOREIGN KEY ("id_physicalSchedule") REFERENCES "PhysicalSchedule" ("id_physicalSchedule") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "FinancialSchedule_id_physicalSchedule_fkey" FOREIGN KEY ("id_physicalSchedule") REFERENCES "PhysicalSchedule" ("id_physicalSchedule") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "FinancialSchedule_id_substage_fkey" FOREIGN KEY ("id_substage") REFERENCES "Substage" ("id_substage") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -121,7 +132,9 @@ CREATE TABLE "EquipmentRequest" (
 -- CreateTable
 CREATE TABLE "Type" (
     "id_type" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "name" TEXT NOT NULL
+    "name" TEXT NOT NULL,
+    "id_category" INTEGER NOT NULL,
+    CONSTRAINT "Type_id_category_fkey" FOREIGN KEY ("id_category") REFERENCES "Category" ("id_category") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -133,7 +146,6 @@ CREATE TABLE "ProgressReport" (
     "title" TEXT NOT NULL,
     "reportVersion" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "substage" TEXT NOT NULL,
     "weather" TEXT NOT NULL,
     "startDate" DATETIME,
     "endDate" DATETIME,
@@ -205,3 +217,77 @@ CREATE TABLE "Category" (
     "id_category" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL
 );
+
+-- CreateTable
+CREATE TABLE "work_stage" (
+    "id_work" INTEGER NOT NULL,
+    "id_stage" INTEGER NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+
+    PRIMARY KEY ("id_work", "id_stage"),
+    CONSTRAINT "work_stage_id_work_fkey" FOREIGN KEY ("id_work") REFERENCES "Work" ("id_work") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "work_stage_id_stage_fkey" FOREIGN KEY ("id_stage") REFERENCES "Stage" ("id_stage") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "stage_substage" (
+    "id_stage" INTEGER NOT NULL,
+    "id_substage" INTEGER NOT NULL,
+
+    PRIMARY KEY ("id_stage", "id_substage"),
+    CONSTRAINT "stage_substage_id_stage_fkey" FOREIGN KEY ("id_stage") REFERENCES "Stage" ("id_stage") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "stage_substage_id_substage_fkey" FOREIGN KEY ("id_substage") REFERENCES "Substage" ("id_substage") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "substage_employes" (
+    "id_substage" INTEGER NOT NULL,
+    "id_user" INTEGER NOT NULL,
+    "assignedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY ("id_substage", "id_user"),
+    CONSTRAINT "substage_employes_id_substage_fkey" FOREIGN KEY ("id_substage") REFERENCES "Substage" ("id_substage") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "substage_employes_id_user_fkey" FOREIGN KEY ("id_user") REFERENCES "User" ("id_user") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "substage_stock" (
+    "id_substage" INTEGER NOT NULL,
+    "id_stock" INTEGER NOT NULL,
+    "quantityUsed" REAL NOT NULL,
+
+    PRIMARY KEY ("id_substage", "id_stock"),
+    CONSTRAINT "substage_stock_id_substage_fkey" FOREIGN KEY ("id_substage") REFERENCES "Substage" ("id_substage") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "substage_stock_id_stock_fkey" FOREIGN KEY ("id_stock") REFERENCES "Stock" ("id_stock") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "substage_schedule" (
+    "id_substageSchedule" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id_substage" INTEGER NOT NULL,
+    "id_physicalSchedule" INTEGER NOT NULL,
+    "expDuration" REAL NOT NULL,
+    "expStartDate" DATETIME NOT NULL,
+    "expEndDate" DATETIME NOT NULL,
+    "exeStartDate" DATETIME,
+    "exeEndDate" DATETIME,
+    "progress" REAL NOT NULL DEFAULT 0.0,
+    CONSTRAINT "substage_schedule_id_substage_fkey" FOREIGN KEY ("id_substage") REFERENCES "Substage" ("id_substage") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "substage_schedule_id_physicalSchedule_fkey" FOREIGN KEY ("id_physicalSchedule") REFERENCES "PhysicalSchedule" ("id_physicalSchedule") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "substage_category_type" (
+    "id_substage" INTEGER NOT NULL,
+    "id_category" INTEGER NOT NULL,
+    "id_type" INTEGER NOT NULL,
+
+    PRIMARY KEY ("id_substage", "id_category", "id_type"),
+    CONSTRAINT "substage_category_type_id_substage_fkey" FOREIGN KEY ("id_substage") REFERENCES "Substage" ("id_substage") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "substage_category_type_id_category_fkey" FOREIGN KEY ("id_category") REFERENCES "Category" ("id_category") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "substage_category_type_id_type_fkey" FOREIGN KEY ("id_type") REFERENCES "Type" ("id_type") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Enterprise_cnpj_key" ON "Enterprise"("cnpj");

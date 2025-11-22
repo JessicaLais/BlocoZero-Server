@@ -4,7 +4,6 @@ import * as typeController from "../controllers/typeController.js";
 
 const router = express.Router();
 
-//Register Usages System
 router.post("/register", verifyBody, typeController.createType);
 
 router.get("/list", typeController.listAllTypes);

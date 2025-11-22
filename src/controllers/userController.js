@@ -40,7 +40,8 @@ export const login = async (req, res) => {
       email: data.email,
       password: data.password,
     });
-    res.status(200).json({ response: "sucess" });
+
+    res.status(200).json({ response: "sucess", user: login });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
