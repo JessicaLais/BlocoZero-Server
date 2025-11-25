@@ -4,6 +4,7 @@ export const register = async ({ data }) => {
   return prisma.category.create({
     data: {
       name: data.name,
+      id_type: data.id_type,
     },
   });
 };
@@ -31,6 +32,7 @@ export const updateCategory = async ({ id_category, data }) => {
     where: { id_category },
     data: {
       name: data.name,
+      id_type: data.id_type,
     },
   });
 };

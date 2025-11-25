@@ -66,6 +66,7 @@ model Work {
   financialSchedules  FinancialSchedule[]
   progressReports     ProgressReport[]
   workStages          WorkStage[]
+  types               Type[]
 }
 
 model Stage {
@@ -166,18 +167,20 @@ model EquipmentRequest {
 }
 
 model Type {
-  id_type Int @id @default(autoincrement())
-  name    String
-  id_category Int 
+  id_type     Int @id @default(autoincrement())
+  name        String
+  work_id     Int
 
-  category     Category @relation(fields: [id_category], references: [id_category])
+  work        Work @relation(fields: [work_id], references: [id_work])
 
-  resources         Resource[]
-  equipmentRequests EquipmentRequest[]
-  stocks            Stock[]
-  budgetReports     BudgetReport[]
-  substageCategoryTypes SubstageCategoryType[] 
+  categories           Category[]
+  resources            Resource[]
+  equipmentRequests    EquipmentRequest[]
+  stocks               Stock[]
+  budgetReports        BudgetReport[]
+  substageCategoryTypes SubstageCategoryType[]
 }
+
 
 model ProgressReport {
   id_progressReport Int      @id @default(autoincrement())
@@ -257,64 +260,70 @@ model MaterialUsage {
 }
 
 model Category {
-  id_category Int @id @default(autoincrement())
-  name        String
+  id_category Int @id @default(autoincrement())
+  id_type     Int
+  name        String
 
-  types       Type[]
+  type        Type @relation(fields: [id_type], references: [id_type])
 
-  resources         Resource[]
-  equipmentRequests EquipmentRequest[]
-  stocks            Stock[]
-  substageCategoryTypes SubstageCategoryType[]
+  resources            Resource[]
+  equipmentRequests    EquipmentRequest[]
+  stocks               Stock[]
+  substageCategoryTypes SubstageCategoryType[]
 }
 
+
+
 model WorkStage {
-  workId       Int      @map("id_work")
-  stageId      Int      @map("id_stage")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  
-  work         Work     @relation(fields: [workId], references: [id_work])
-  stage        Stage    @relation(fields: [stageId], references: [id_stage])
-  
-  @@id([workId, stageId])
-  @@map("work_stage")
+  workId    Int @map("id_work")
+  stageId   Int @map("id_stage")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  work      Work  @relation(fields: [workId], references: [id_work])
+  stage     Stage @relation(fields: [stageId], references: [id_stage])
+
+  @@id([workId, stageId])
+  @@map("work_stage")
 }
 
 model StageSubstage {
-  stageId       Int      @map("id_stage")
-  substageId    Int      @map("id_substage")
-  
-  stage         Stage    @relation(fields: [stageId], references: [id_stage])
-  substage      Substage @relation(fields: [substageId], references: [id_substage])
-  
-  @@id([stageId, substageId]) 
-  @@map("stage_substage")
+  stageId    Int @map("id_stage")
+  substageId Int @map("id_substage")
+
+  stage      Stage    @relation(fields: [stageId], references: [id_stage])
+  substage   Substage @relation(fields: [substageId], references: [id_substage])
+
+  @@id([stageId, substageId])
+  @@map("stage_substage")
 }
+
 
 model SubstageEmploye {
-  substageId    Int      @map("id_substage")
-  userId        Int      @map("id_user")
-  assignedAt    DateTime @default(now())
-  
-  substage      Substage @relation(fields: [substageId], references: [id_substage])
-  user          User     @relation(fields: [userId], references: [id_user]) 
-  
-  @@id([substageId, userId])
-  @@map("substage_employes")
+  substageId Int @map("id_substage")
+  userId     Int @map("id_user")
+  assignedAt DateTime @default(now())
+
+  substage   Substage @relation(fields: [substageId], references: [id_substage])
+  user       User     @relation(fields: [userId], references: [id_user])
+
+  @@id([substageId, userId])
+  @@map("substage_employes")
 }
 
+
 model SubstageStock {
-  substageId          Int      @map("id_substage")
-  materialStockId     Int      @map("id_stock")
-  quantityUsed        Float    
-  
-  substage            Substage @relation(fields: [substageId], references: [id_substage])
-  materialStock       Stock    @relation(fields: [materialStockId], references: [id_stock])
-  
-  @@id([substageId, materialStockId])
-  @@map("substage_stock")
+  substageId      Int @map("id_substage")
+  materialStockId Int @map("id_stock")
+  quantityUsed    Float
+
+  substage        Substage @relation(fields: [substageId], references: [id_substage])
+  materialStock   Stock    @relation(fields: [materialStockId], references: [id_stock])
+
+  @@id([substageId, materialStockId])
+  @@map("substage_stock")
 }
+
 
 model SubstageSchedule {
   id_substageSchedule Int       @id @default(autoincrement())

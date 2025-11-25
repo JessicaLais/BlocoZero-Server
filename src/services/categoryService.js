@@ -1,5 +1,6 @@
 import Category from "../entitys/categoryEntity.js";
 import * as categoryModel from "../models/categoryModel.js";
+import { getById } from "../models/typeModel.js";
 
 export const register = async ({ data }) => {
   const searchCategoryByName = await categoryModel.searchCategoryByName({
@@ -7,6 +8,11 @@ export const register = async ({ data }) => {
   });
   if (searchCategoryByName) {
     throw new Error("Category already exists");
+  }
+  const searchTypeById = await getById({ id: data.id_type });
+
+  if (!searchTypeById) {
+    throw new Error("Type not found");
   }
 
   const category = new Category(data);
@@ -26,6 +32,12 @@ export const updateCategory = async ({ id, data }) => {
   });
   if (!searchCategoryById) {
     throw new Error("Category not found");
+  }
+
+  const searchTypeById = await getById({ id: data.id_type });
+
+  if (!searchTypeById) {
+    throw new Error("Type not found");
   }
 
   const category = new Category(data);

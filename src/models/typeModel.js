@@ -4,6 +4,7 @@ export const createType = async ({ data }) => {
   return prisma.type.create({
     data: {
       name: data.name,
+      work_id: data.work_id,
     },
   });
 };
@@ -35,6 +36,7 @@ export const updateType = async ({ id, data }) => {
     },
     data: {
       name: data.name,
+      work_id: data.work_id,
     },
   });
 };

@@ -6,7 +6,7 @@ import workRouter from "./src/routes/workRouter.js";
 //import usagesRouter from "./src/routes/usagesRouter.js";
 //import scheduleRouter from "./src/routes/scheduleRouter.js";
 import stageRouter from "./src/routes/stageRouter.js";
-import substageRouter from "./src/routes/substageRouter.js"
+import substageRouter from "./src/routes/substageRouter.js";
 //import damagedEquipamentRouter from "./src/routes/damagedEquipamentRouter.js";
 import budgetRouter from "./src/routes/budgetRouter.js";
 import enterpriseRouter from "./src/routes/enterpriseRouter.js";
@@ -45,7 +45,7 @@ app.use("/substage", substageRouter);
 app.use("/enterprise", enterpriseRouter);
 app.use("/type", typeRouter);
 app.use("/category", categoryRouter);
-app.use("/stock", stockRouter);
+//app.use("/stock", stockRouter);
 
 //middlewares
 app.use(middlewares.verifyRoutes);

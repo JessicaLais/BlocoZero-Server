@@ -4,6 +4,7 @@ export const register = async (req, res) => {
   try {
     const data = req.body;
     const category = await categoryService.register({ data });
+
     res.status(200).json({ response: "sucess" });
   } catch (error) {
     res.status(400).json({ error: error.message });

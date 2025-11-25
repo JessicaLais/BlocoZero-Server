@@ -1,5 +1,6 @@
 import Type from "../entitys/typeEntity.js";
 import * as typeModel from "../models/typeModel.js";
+import { getSpecificWork } from "../models/worksModel.js";
 
 export const createType = async ({ data }) => {
   const searchTypeByName = await typeModel.getTypeByName({ data });
@@ -7,7 +8,14 @@ export const createType = async ({ data }) => {
     throw new Error("Existing type");
   }
 
+  const searchWorkById = await getSpecificWork({ id: data.work_id });
+
+  if (!searchWorkById) {
+    throw new Error("work not found");
+  }
+
   const type = new Type(data);
+
   return await typeModel.createType({ data: type });
 };
 
@@ -22,6 +30,12 @@ export const updateType = async ({ id, data }) => {
   const searchTpe = await typeModel.getById({ id });
   if (!searchTpe) {
     throw new Error("type not found");
+  }
+
+  const searchWorkById = await getSpecificWork({ id: data.work_id });
+
+  if (!searchWorkById) {
+    throw new Error("work not found");
   }
 
   const type = new Type(data);
