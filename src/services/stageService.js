@@ -1,78 +1,60 @@
-
 import * as stageModel from "../models/stageModel.js";
 import Stage from "../entitys/stageEntity.js";
+import { getSpecificWork } from "../models/worksModel.js";
 
 export const createStage = async ({ data }) => {
-    
-    const stageExisting = await stageModel.findStageByName({
-        name: data.name,
-    });
-    
-    if (stageExisting) {
-        throw new Error(`The Stage name "${data.name}" already exists`);
-    }
+  const searchStageByName = await stageModel.findStageByName({
+    name: data.name,
+  });
+  if (searchStageByName) {
+    throw new Error("Stage already exist");
+  }
 
-    const fullStageData = {
-        ...data,
-        progress: data.progress !== undefined ? data.progress : 0.0, 
-    };
+  const stage = new Stage(data);
 
-    const stage = new Stage({
-        ...fullStageData,
-        expStartDate: new Date(fullStageData.expStartDate),
-        expEndDate: new Date(fullStageData.expEndDate),
-        exeStartDate: fullStageData.exeStartDate ? new Date(fullStageData.exeStartDate) : null,
-        exeEndDate: fullStageData.exeEndDate ? new Date(fullStageData.exeEndDate) : null,
-    });
-    
-    const createStageDB = await stageModel.createStage({ data: stage });
+  const createNewStage = await stageModel.createStage({ data: stage });
 
-    return createStageDB;
+  return await stageModel.createRelationStageWithWork({
+    id_stage: createNewStage.id_stage,
+    id_work: data.id_work,
+  });
 };
 
-export const listAllStages = async () => {
-    const stages = await stageModel.allStages();
-    return stages.map((item) => new Stage(item));
+export const listAllStageByWorkId = async ({ id_work }) => {
+  id_work = Number(id_work);
+  const searchWorkById = await getSpecificWork({ id: id_work });
+
+  if (!searchWorkById) {
+    throw new Error("Work not found");
+  }
+
+  const searchAllStagesByWorkId = await stageModel.listAllStageByWorkId({
+    id_work,
+  });
+
+  return searchAllStagesByWorkId.map((stage) => new Stage(stage.stage));
 };
 
-export const getStageById = async ({ stage_id }) => {
-    const getStage = await stageModel.getStageById({ id: Number(stage_id) }); 
-    if (!getStage) {
-        throw new Error("Stage not found");
-    }
-    const stage = new Stage(getStage);
-    return stage;
+export const updateStage = async ({ id_stage, data }) => {
+  id_stage = Number(id_stage);
+  const searchStageById = await stageModel.stageByid({ id: id_stage });
+
+  if (!searchStageById) {
+    throw new Error("Work not found");
+  }
+
+  const stage = new Stage(data);
+
+  return await stageModel.updateStageById({ id_stage, data: stage });
 };
 
-export const updateStage = async ({ data, id }) => {
-    id = Number(id);
-    const findStage = await stageModel.getStageById({ id }); 
-    if (!findStage) {
-        throw new Error("Stage not found");
-    }
+export const deleteStage = async ({ id_stage }) => {
+  id_stage = Number(id_stage);
+  const searchStageById = await stageModel.stageByid({ id: id_stage });
 
-    const updatedData = {
-        ...findStage, 
-        ...data, 
-        id_stage: id,
-        expStartDate: data.expStartDate ? new Date(data.expStartDate) : findStage.expStartDate,
-        expEndDate: data.expEndDate ? new Date(data.expEndDate) : findStage.expEndDate,
-        exeStartDate: data.exeStartDate ? new Date(data.exeStartDate) : findStage.exeStartDate,
-        exeEndDate: data.exeEndDate ? new Date(data.exeEndDate) : findStage.exeEndDate,
-    };
-    
-    const stage = new Stage(updatedData); 
-    
-    return await stageModel.updateStage({ data: stage, id: id });
-};
+  if (!searchStageById) {
+    throw new Error("Work not found");
+  }
 
-export const deleteStage = async ({ id }) => {
-    id = Number(id);
-    const getStage = await stageModel.getStageById({ id }); 
-    if (getStage === null) {
-        throw new Error("Stage not found");
-    }
-    const deleteStage = await stageModel.deleteStage({ id }); 
-
-    return deleteStage;
+  return await stageModel.deleteStageById({ id_stage });
 };

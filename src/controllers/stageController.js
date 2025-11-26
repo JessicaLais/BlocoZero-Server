@@ -10,20 +10,11 @@ export const createStage = async (req, res) => {
   }
 };
 
-export const getAllStages = async (req, res) => {
+export const listAllStageByWorkId = async (req, res) => {
   try {
-    const stages = await stageService.listAllStages();
-    res.json(stages);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-export const getStageById = async (req, res) => {
-  try {
-    const stage_id = req.params.id;
-    const getStage = await stageService.getStageById({ stage_id });
-    res.status(200).json(getStage);
+    const id_work = req.params.id_work;
+    const stages = await stageService.listAllStageByWorkId({ id_work });
+    res.status(200).json({ stages });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -31,23 +22,21 @@ export const getStageById = async (req, res) => {
 
 export const updateStage = async (req, res) => {
   try {
+    const id_stage = req.params.id;
     const data = req.body;
-    const id = req.params.id;
-
-    const update = await stageService.updateStage({ data, id });
-
-    res.status(200).json({ response: "sucess" });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
+    const updateStage = await stageService.updateStage({ id_stage, data });
+    res.status(200).json({ message: "sucess" });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 };
 
 export const deleteStage = async (req, res) => {
   try {
-    const id = req.params.id; // Este é o id_stage
-    const deleteStage = await stageService.deleteStage({ id });
-    res.status(200).json({ response: "sucess" });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
+    const id_stage = req.params.id;
+    const deleteStage = await stageService.deleteStage({ id_stage });
+    res.status(200).json({ message: "sucess" });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 };
