@@ -1,59 +1,67 @@
 import * as stockService from "../services/stockService.js";
 
-export const createStockItem = async (req, res) => {
+export const getDashboard = async (req, res) => {
   try {
-    const data = req.body;
-    await stockService.createStockItem({ data });
-    res.status(200).json({ response: "success" });
+    const { workId } = req.params; 
+    const dashboardData = await stockService.getStockDashboard(workId);
+    return res.status(200).json(dashboardData);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Erro interno." });
+  }
+};
+
+// POST Saída
+export const registerExit = async (req, res) => {
+  try {
+    const { stockId, quantity, employeeName } = req.body;
+    if (!stockId || !quantity) return res.status(400).json({ error: "Dados incompletos" });
+
+    const updatedItem = await stockService.registerExit({ stockId, quantity: Number(quantity), employeeName });
+    return res.status(200).json(updatedItem);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+};
+
+// POST Entrada
+export const registerEntry = async (req, res) => {
+  try {
+    const { stockId, quantity } = req.body;
+    if (!stockId || !quantity) return res.status(400).json({ error: "Dados incompletos" });
+
+    const updatedItem = await stockService.registerEntry({ stockId, quantity: Number(quantity) });
+    return res.status(200).json(updatedItem);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+// CRUD
+export const createItem = async (req, res) => {
+  try {
+    const newItem = await stockService.createStockItem({ data: req.body });
+    res.status(201).json(newItem);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-export const getAllStockItems = async (req, res) => {
+export const updateItem = async (req, res) => {
   try {
-    const items = await stockService.listAllStockItems();
-    res.json(items);
+    const { id } = req.params;
+    const updated = await stockService.updateStockItem({ id, data: req.body });
+    res.status(200).json(updated);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-export const getStockItemById = async (req, res) => {
+export const deleteItem = async (req, res) => {
   try {
-    const id = req.params.id;
-    const item = await stockService.getStockItemById({ id });
-    res.status(200).json(item);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-export const updateStockItem = async (req, res) => {
-  try {
-    const data = req.body;
-    const id = req.params.id;
-    await stockService.updateStockItem({ data, id });
-    res.status(200).json({ response: "success" });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-export const deleteStockItem = async (req, res) => {
-  try {
-    const id = req.params.id;
+    const { id } = req.params;
     await stockService.deleteStockItem({ id });
-    res.status(200).json({ response: "success" });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-export const getAvailableStockItems = async (req, res) => {
-  try {
-    const items = await stockService.listAvailableStockItems();
-    res.status(200).json(items);
+    res.status(204).send();
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

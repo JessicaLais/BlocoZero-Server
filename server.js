@@ -13,7 +13,7 @@ import typeRouter from "./src/routes/typeRouter.js";
 import categoryRouter from "./src/routes/categoryRouter.js";
 import stageRouter from "./src/routes/stageRouter.js";
 
-//import stockRouter from "./src/routes/stockRouter.js";
+import stockRouter from "./src/routes/stockRouter.js";
 //import workScheduleRouter from "./src/routes/workScheduleRouter.js"
 
 import cors from "cors";
@@ -45,7 +45,7 @@ app.use("/enterprise", enterpriseRouter);
 app.use("/type", typeRouter);
 app.use("/category", categoryRouter);
 app.use("/stage", stageRouter);
-//app.use("/stock", stockRouter);
+app.use("/stock", stockRouter);
 
 app.use((req, res) => {
   middlewares.verifyRoutes(req, res);

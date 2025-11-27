@@ -220,6 +220,7 @@ model BudgetReport {
 }
 
 model Stock {
+  
   id_stock             Int      @id @default(autoincrement())
   id_budget            Int
   id_type              Int
