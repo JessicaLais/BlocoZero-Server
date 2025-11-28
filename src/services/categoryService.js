@@ -20,6 +20,14 @@ export const register = async ({ data }) => {
   return categoryModel.register({ data: category });
 };
 
+export const getCaterogyById = async ({ id }) => {
+  const searchCategoryById = await categoryModel.searchCategoryById({
+    id_category: id,
+  });
+
+  return new Category(searchCategoryById);
+};
+
 export const listAllCategory = async () => {
   const allCategory = await categoryModel.listAllCategory();
   return allCategory.map((item) => new Category(item));

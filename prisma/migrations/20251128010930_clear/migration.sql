@@ -70,7 +70,7 @@ CREATE TABLE "Substage" (
 );
 
 -- CreateTable
-CREATE TABLE "Resource" (
+CREATE TABLE "Budget" (
     "id_budget" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "id_work" INTEGER NOT NULL,
     "id_category" INTEGER NOT NULL,
@@ -88,9 +88,9 @@ CREATE TABLE "Resource" (
     "weightLength" REAL NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "Resource_id_work_fkey" FOREIGN KEY ("id_work") REFERENCES "Work" ("id_work") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "Resource_id_category_fkey" FOREIGN KEY ("id_category") REFERENCES "Category" ("id_category") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "Resource_id_type_fkey" FOREIGN KEY ("id_type") REFERENCES "Type" ("id_type") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "Budget_id_work_fkey" FOREIGN KEY ("id_work") REFERENCES "Work" ("id_work") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Budget_id_category_fkey" FOREIGN KEY ("id_category") REFERENCES "Category" ("id_category") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Budget_id_type_fkey" FOREIGN KEY ("id_type") REFERENCES "Type" ("id_type") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -120,7 +120,7 @@ CREATE TABLE "FinancialSchedule" (
 
 -- CreateTable
 CREATE TABLE "EquipmentRequest" (
-    "id_equipment" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id_equipmentRequest" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "id_type" INTEGER NOT NULL,
     "id_category" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
@@ -133,8 +133,8 @@ CREATE TABLE "EquipmentRequest" (
 CREATE TABLE "Type" (
     "id_type" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
-    "id_category" INTEGER NOT NULL,
-    CONSTRAINT "Type_id_category_fkey" FOREIGN KEY ("id_category") REFERENCES "Category" ("id_category") ON DELETE RESTRICT ON UPDATE CASCADE
+    "work_id" INTEGER NOT NULL,
+    CONSTRAINT "Type_work_id_fkey" FOREIGN KEY ("work_id") REFERENCES "Work" ("id_work") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -178,14 +178,12 @@ CREATE TABLE "BudgetReport" (
 -- CreateTable
 CREATE TABLE "Stock" (
     "id_stock" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "id_budget" INTEGER NOT NULL,
     "id_type" INTEGER NOT NULL,
     "id_category" INTEGER NOT NULL,
     "code" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "unitMeasure" TEXT NOT NULL,
     "stockQuantity" INTEGER NOT NULL,
-    "allocatedStage" TEXT NOT NULL,
     "weightLength" REAL NOT NULL,
     "recentInflow" INTEGER NOT NULL,
     "cumulativeInflow" INTEGER NOT NULL,
@@ -195,7 +193,6 @@ CREATE TABLE "Stock" (
     "minQuantity" INTEGER NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "Stock_id_budget_fkey" FOREIGN KEY ("id_budget") REFERENCES "Resource" ("id_budget") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Stock_id_type_fkey" FOREIGN KEY ("id_type") REFERENCES "Type" ("id_type") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Stock_id_category_fkey" FOREIGN KEY ("id_category") REFERENCES "Category" ("id_category") ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -215,7 +212,9 @@ CREATE TABLE "MaterialUsage" (
 -- CreateTable
 CREATE TABLE "Category" (
     "id_category" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "name" TEXT NOT NULL
+    "id_type" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
+    CONSTRAINT "Category_id_type_fkey" FOREIGN KEY ("id_type") REFERENCES "Type" ("id_type") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable

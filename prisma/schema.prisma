@@ -23,50 +23,51 @@ model Enterprise {
 }
 
 model User {
-  id_user           Int      @id @default(autoincrement())
-  enterprise_id     Int
-  userFunction      String
-  email             String
-  password          String
-  phone             String
-  works             String
-  hourlyRate        Float
-  name              String
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  isActive          Boolean
+  id_user          Int      @id @default(autoincrement())
+  enterprise_id    Int
+  userFunction     String
+  email            String
+  password         String
+  phone            String
+  works            String
+  hourlyRate       Float
+  name             String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  isActive         Boolean
 
-  enterprise        Enterprise         @relation(fields: [enterprise_id], references: [id_entreprise])
-  progressReports   ProgressReport[]
-  budgetReports     BudgetReport[]
-  substageEmployes  SubstageEmploye[]
+  enterprise       Enterprise         @relation(fields: [enterprise_id], references: [id_entreprise])
+  progressReports  ProgressReport[]
+  budgetReports    BudgetReport[]
+  substageEmployes SubstageEmploye[]
 }
 
 model Work {
-  id_work           Int      @id @default(autoincrement())
-  id_entreprise     Int
-  id_manager        Int
-  id_tender         Int?
-  title             String
-  cnpj              String
-  address           String
-  cep               String
-  budget            Float
-  start_time        DateTime
-  end_time          DateTime
-  describe          String
-  photo             Bytes
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  isActive          Boolean
+  id_work          Int      @id @default(autoincrement())
+  id_entreprise    Int
+  id_manager       Int
+  id_tender        Int?
+  title            String
+  cnpj             String
+  address          String
+  cep              String
+  budget           Float
+  start_time       DateTime
+  end_time         DateTime
+  describe         String
+  photo            Bytes
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  isActive         Boolean
 
-  enterprise          Enterprise          @relation(fields: [id_entreprise], references: [id_entreprise])
-  budgets             Budget[]
-  physicalSchedules   PhysicalSchedule[]
-  financialSchedules  FinancialSchedule[]
-  progressReports     ProgressReport[]
-  workStages          WorkStage[]
-  types               Type[]
+  enterprise        Enterprise          @relation(fields: [id_entreprise], references: [id_entreprise])
+  budgets           Budget[]
+  physicalSchedules PhysicalSchedule[]
+  financialSchedules FinancialSchedule[]
+  progressReports   ProgressReport[]
+  workStages        WorkStage[]
+  types             Type[]
+  stocks            Stock[] 
 }
 
 model Stage {
@@ -99,7 +100,7 @@ model Substage {
   substageStocks    SubstageStock[]
   substageSchedules SubstageSchedule[]
   financialSchedules FinancialSchedule[]
-  substageCategoryTypes SubstageCategoryType[] 
+  substageCategoryTypes SubstageCategoryType[]
 }
 
 model Budget {
@@ -121,10 +122,10 @@ model Budget {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  work              Work     @relation(fields: [id_work], references: [id_work])
-  category          Category @relation(fields: [id_category], references: [id_category])
-  type              Type     @relation(fields: [id_type], references: [id_type])
-  stocks            Stock[]
+  work     Work     @relation(fields: [id_work], references: [id_work])
+  category Category @relation(fields: [id_category], references: [id_category])
+  type     Type     @relation(fields: [id_type], references: [id_type])
+  // REMOVIDO: stocks relation porque Stock não possui id_budget
 }
 
 model PhysicalSchedule {
@@ -132,10 +133,10 @@ model PhysicalSchedule {
   id_work             Int
   id_stage            Int
 
-  work                Work                @relation(fields: [id_work], references: [id_work])
-  stage               Stage               @relation(fields: [id_stage], references: [id_stage])
-  financialSchedules  FinancialSchedule[]
-  substageSchedules   SubstageSchedule[]
+  work               Work               @relation(fields: [id_work], references: [id_work])
+  stage              Stage              @relation(fields: [id_stage], references: [id_stage])
+  financialSchedules FinancialSchedule[]
+  substageSchedules  SubstageSchedule[]
 }
 
 model FinancialSchedule {
@@ -143,15 +144,15 @@ model FinancialSchedule {
   id_work              Int
   id_stage             Int
   id_physicalSchedule  Int
-  id_substage          Int?  
+  id_substage          Int?
   period               DateTime
   percentage           Float
   value                Float
 
-  work                 Work                @relation(fields: [id_work], references: [id_work])
-  stage                Stage               @relation(fields: [id_stage], references: [id_stage])
-  physicalSchedule     PhysicalSchedule    @relation(fields: [id_physicalSchedule], references: [id_physicalSchedule])
-  substage             Substage?           @relation(fields: [id_substage], references: [id_substage]) 
+  work             Work             @relation(fields: [id_work], references: [id_work])
+  stage            Stage            @relation(fields: [id_stage], references: [id_stage])
+  physicalSchedule PhysicalSchedule @relation(fields: [id_physicalSchedule], references: [id_physicalSchedule])
+  substage         Substage?        @relation(fields: [id_substage], references: [id_substage])
 }
 
 model EquipmentRequest {
@@ -161,8 +162,8 @@ model EquipmentRequest {
   name         String
   quantity     Int
 
-  type         Type     @relation(fields: [id_type], references: [id_type])
-  category     Category @relation(fields: [id_category], references: [id_category])
+  type     Type     @relation(fields: [id_type], references: [id_type])
+  category Category @relation(fields: [id_category], references: [id_category])
 }
 
 model Type {
@@ -173,13 +174,12 @@ model Type {
   work        Work @relation(fields: [work_id], references: [id_work])
 
   categories           Category[]
-  budgets            Budget[]
+  budgets              Budget[]
   equipmentRequests    EquipmentRequest[]
   stocks               Stock[]
   budgetReports        BudgetReport[]
   substageCategoryTypes SubstageCategoryType[]
 }
-
 
 model ProgressReport {
   id_progressReport Int      @id @default(autoincrement())
@@ -194,9 +194,9 @@ model ProgressReport {
   endDate           DateTime?
   note              String
 
-  work              Work     @relation(fields: [id_work], references: [id_work])
-  user              User     @relation(fields: [id_user], references: [id_user])
-  stage             Stage    @relation(fields: [id_stage], references: [id_stage])
+  work Work   @relation(fields: [id_work], references: [id_work])
+  user User   @relation(fields: [id_user], references: [id_user])
+  stage Stage @relation(fields: [id_stage], references: [id_stage])
 }
 
 model BudgetReport {
@@ -214,22 +214,20 @@ model BudgetReport {
   executedValue        Float
   financialDeviation   Float
 
-  type                 Type     @relation(fields: [id_type], references: [id_type])
-  user                 User     @relation(fields: [id_user], references: [id_user])
-  stage                Stage    @relation(fields: [id_stage], references: [id_stage])
+  type  Type  @relation(fields: [id_type], references: [id_type])
+  user  User  @relation(fields: [id_user], references: [id_user])
+  stage Stage @relation(fields: [id_stage], references: [id_stage])
 }
 
 model Stock {
-  
   id_stock             Int      @id @default(autoincrement())
-  id_budget            Int
   id_type              Int
   id_category          Int
+  id_work              Int       // <--- ADICIONADO AQUI
   code                 String
   name                 String
   unitMeasure          String
   stockQuantity        Int
-  allocatedStage       String
   weightLength         Float
   recentInflow         Int
   cumulativeInflow     Int
@@ -240,12 +238,14 @@ model Stock {
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
-  budget           Budget        @relation(fields: [id_budget], references: [id_budget])
-  type                 Type             @relation(fields: [id_type], references: [id_type])
-  category             Category         @relation(fields: [id_category], references: [id_category])
-  materialUsages       MaterialUsage[]
-  substageStocks       SubstageStock[]
+  type           Type      @relation(fields: [id_type], references: [id_type])
+  category       Category  @relation(fields: [id_category], references: [id_category])
+  work           Work      @relation(fields: [id_work], references: [id_work]) // <--- RELAÇÃO ADICIONADA
+
+  materialUsages MaterialUsage[]
+  substageStocks SubstageStock[]
 }
+
 
 model MaterialUsage {
   id_materialUsage Int      @id @default(autoincrement())
@@ -256,7 +256,7 @@ model MaterialUsage {
   code             Int
   defect           String
 
-  stock            Stock    @relation(fields: [id_stock], references: [id_stock])
+  stock Stock @relation(fields: [id_stock], references: [id_stock])
 }
 
 model Category {
@@ -264,61 +264,57 @@ model Category {
   id_type     Int
   name        String
 
-  type        Type @relation(fields: [id_type], references: [id_type])
+  type    Type @relation(fields: [id_type], references: [id_type])
 
-  budgets            Budget[]
+  budgets              Budget[]
   equipmentRequests    EquipmentRequest[]
   stocks               Stock[]
   substageCategoryTypes SubstageCategoryType[]
 }
 
-// FIXED: Removed individual @id, kept only @@id composite key
 model WorkStage {
   workId    Int @map("id_work")
   stageId   Int @map("id_stage")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  work      Work  @relation(fields: [workId], references: [id_work])
-  stage     Stage @relation(fields: [stageId], references: [id_stage])
+  work  Work  @relation(fields: [workId], references: [id_work])
+  stage Stage @relation(fields: [stageId], references: [id_stage])
 
   @@id([workId, stageId])
   @@map("work_stage")
 }
 
-// FIXED: Removed individual @id, kept only @@id composite key
 model StageSubstage {
-  stageId          Int @map("id_stage")
-  substageId       Int @map("id_substage")
+  stageId    Int @map("id_stage")
+  substageId Int @map("id_substage")
 
-  stage      Stage    @relation(fields: [stageId], references: [id_stage])
-  substage   Substage @relation(fields: [substageId], references: [id_substage])
+  stage    Stage    @relation(fields: [stageId], references: [id_stage])
+  substage Substage @relation(fields: [substageId], references: [id_substage])
 
   @@id([stageId, substageId])
   @@map("stage_substage")
 }
 
-// FIXED: Removed individual @id, kept only @@id composite key
 model SubstageEmploye {
   substageId Int @map("id_substage")
   userId     Int @map("id_user")
   assignedAt DateTime @default(now())
 
-  substage   Substage @relation(fields: [substageId], references: [id_substage])
-  user       User     @relation(fields: [userId], references: [id_user])
+  substage Substage @relation(fields: [substageId], references: [id_substage])
+  user     User     @relation(fields: [userId], references: [id_user])
 
   @@id([substageId, userId])
   @@map("substage_employes")
 }
 
-// FIXED: Removed individual @id, kept only @@id composite key
 model SubstageStock {
   substageId      Int @map("id_substage")
   materialStockId Int @map("id_stock")
   quantityUsed    Float
 
-  substage        Substage @relation(fields: [substageId], references: [id_substage])
-  materialStock   Stock    @relation(fields: [materialStockId], references: [id_stock])
+  substage      Substage @relation(fields: [substageId], references: [id_substage])
+  materialStock Stock    @relation(fields: [materialStockId], references: [id_stock])
 
   @@id([substageId, materialStockId])
   @@map("substage_stock")
@@ -328,31 +324,30 @@ model SubstageSchedule {
   id_substageSchedule Int       @id @default(autoincrement())
   id_substage         Int
   id_physicalSchedule Int
-  
-  expDuration         Float
-  expStartDate        DateTime
-  expEndDate          DateTime
-  
-  exeStartDate        DateTime? 
-  exeEndDate          DateTime? 
-  progress            Float     @default(0.0)
-  
-  substage            Substage          @relation(fields: [id_substage], references: [id_substage])
-  physicalSchedule    PhysicalSchedule  @relation(fields: [id_physicalSchedule], references: [id_physicalSchedule])
-  
+
+  expDuration  Float
+  expStartDate DateTime
+  expEndDate   DateTime
+
+  exeStartDate DateTime?
+  exeEndDate   DateTime?
+  progress     Float     @default(0.0)
+
+  substage         Substage         @relation(fields: [id_substage], references: [id_substage])
+  physicalSchedule PhysicalSchedule @relation(fields: [id_physicalSchedule], references: [id_physicalSchedule])
+
   @@map("substage_schedule")
 }
 
-// FIXED: Removed individual @id, kept only @@id composite key
 model SubstageCategoryType {
-  substageId  Int      @map("id_substage")
-  categoryId  Int      @map("id_category")
-  typeId      Int      @map("id_type")
-  
-  substage    Substage @relation(fields: [substageId], references: [id_substage])
-  category    Category @relation(fields: [categoryId], references: [id_category])
-  type        Type     @relation(fields: [typeId], references: [id_type])
-  
+  substageId  Int @map("id_substage")
+  categoryId  Int @map("id_category")
+  typeId      Int @map("id_type")
+
+  substage Substage @relation(fields: [substageId], references: [id_substage])
+  category Category @relation(fields: [categoryId], references: [id_category])
+  type     Type     @relation(fields: [typeId], references: [id_type])
+
   @@id([substageId, categoryId, typeId])
   @@map("substage_category_type")
 }

@@ -1,10 +1,20 @@
 import * as stockService from "../services/stockService.js";
 
+export const createItem = async (req, res) => {
+  try {
+    const data = req.body;
+    const newItem = await stockService.createStockItem({ data });
+    res.status(201).json({ message: "sucess" });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 export const getDashboard = async (req, res) => {
   try {
-    const { workId } = req.params; 
-    const dashboardData = await stockService.getStockDashboard(workId);
-    return res.status(200).json(dashboardData);
+    const id = req.params.id;
+    const dashboardData = await stockService.getStockDashboard({ id });
+    return res.status(200).json({ stock_items: dashboardData });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Erro interno." });
@@ -15,9 +25,14 @@ export const getDashboard = async (req, res) => {
 export const registerExit = async (req, res) => {
   try {
     const { stockId, quantity, employeeName } = req.body;
-    if (!stockId || !quantity) return res.status(400).json({ error: "Dados incompletos" });
+    if (!stockId || !quantity)
+      return res.status(400).json({ error: "Dados incompletos" });
 
-    const updatedItem = await stockService.registerExit({ stockId, quantity: Number(quantity), employeeName });
+    const updatedItem = await stockService.registerExit({
+      stockId,
+      quantity: Number(quantity),
+      employeeName,
+    });
     return res.status(200).json(updatedItem);
   } catch (error) {
     return res.status(400).json({ error: error.message });
@@ -28,9 +43,13 @@ export const registerExit = async (req, res) => {
 export const registerEntry = async (req, res) => {
   try {
     const { stockId, quantity } = req.body;
-    if (!stockId || !quantity) return res.status(400).json({ error: "Dados incompletos" });
+    if (!stockId || !quantity)
+      return res.status(400).json({ error: "Dados incompletos" });
 
-    const updatedItem = await stockService.registerEntry({ stockId, quantity: Number(quantity) });
+    const updatedItem = await stockService.registerEntry({
+      stockId,
+      quantity: Number(quantity),
+    });
     return res.status(200).json(updatedItem);
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -38,14 +57,6 @@ export const registerEntry = async (req, res) => {
 };
 
 // CRUD
-export const createItem = async (req, res) => {
-  try {
-    const newItem = await stockService.createStockItem({ data: req.body });
-    res.status(201).json(newItem);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
 
 export const updateItem = async (req, res) => {
   try {

@@ -1,63 +1,65 @@
 export default class Stock {
   constructor({
     id_stock,
-    id_budget,
     id_type,
     id_category,
+    id_work,
     code,
     name,
     unitMeasure,
     stockQuantity,
-    allocatedStage,
     weightLength,
-    actualQuantity,
-    minQuantity,
     recentInflow,
     cumulativeInflow,
-    recentOutflow,
     cumulativeOutflow,
-    createdAt,  
-    updatedAt
+    recentOutflow,
+    actualQuantity,
+    minQuantity,
+    createdAt,
+    updatedAt,
   }) {
     this.id_stock = id_stock || null;
-    this.id_budget = Number(id_budget);
     this.id_type = Number(id_type);
     this.id_category = Number(id_category);
+    this.id_work = id_work;
     this.code = code;
     this.name = name;
     this.unitMeasure = unitMeasure;
-    this.allocatedStage = allocatedStage;
-    this.stockQuantity = Number(stockQuantity);
-    this.weightLength = Number(weightLength);
-    this.actualQuantity = actualQuantity !== undefined ? Number(actualQuantity) : Number(stockQuantity);
-    this.minQuantity = Number(minQuantity);
-    this.recentInflow = Number(recentInflow || 0);
-    this.cumulativeInflow = Number(cumulativeInflow || 0);
-    this.recentOutflow = Number(recentOutflow || 0);
-    this.cumulativeOutflow = Number(cumulativeOutflow || 0);
-    this.createdAt = createdAt ? new Date(createAt) : undefined;
-    this.updatedAt = updatedAt ? new Date(updatedAt) : undefined;
+    this.stockQuantity = stockQuantity;
+    this.weightLength = weightLength;
+    this.recentInflow = recentInflow ? recentInflow : 0;
+    this.cumulativeInflow = cumulativeInflow ? cumulativeInflow : 0;
+    this.cumulativeOutflow = cumulativeOutflow ? cumulativeOutflow : 0;
+    this.recentOutflow = recentOutflow ? recentInflow : 0;
+    this.actualQuantity = actualQuantity ? actualQuantity : stockQuantity;
+    this.minQuantity = minQuantity;
+    this.createdAt = createdAt ? new Date(createdAt) : "";
+    this.updatedAt = updatedAt ? new Date(updatedAt) : "";
     this.validate();
   }
 
   validate = () => {
     const fields = {
-      id_budget: this.id_budget,
       id_type: this.id_type,
       id_category: this.id_category,
+      id_work: this.id_work,
       code: this.code,
       name: this.name,
       unitMeasure: this.unitMeasure,
       stockQuantity: this.stockQuantity,
-      allocatedStage: this.allocatedStage,
       weightLength: this.weightLength,
+      minQuantity: this.minQuantity,
     };
 
     for (const [key, value] of Object.entries(fields)) {
-      if (value === null || value === undefined || value === '' || (typeof value === 'number' && isNaN(value))) {
+      if (
+        value === null ||
+        value === undefined ||
+        value === "" ||
+        (typeof value === "number" && isNaN(value))
+      ) {
         throw new Error(`Missing or invalid field in Stock: ${key}`);
       }
     }
   };
-
 }

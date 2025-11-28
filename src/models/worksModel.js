@@ -1,6 +1,6 @@
 import prisma from "./connectionModel.js";
 
-export const createWork = async ({ data, file }) => {  
+export const createWork = async ({ data, file }) => {
   return await prisma.work.create({
     data: {
       id_entreprise: data.id_entreprise,
@@ -73,7 +73,7 @@ export const updateWorkById = ({ data, work_id, file }) => {
 export const deleteWorkById = async ({ id }) => {
   return prisma.work.update({
     where: { id_work: id },
-    data: { 
+    data: {
       isActive: false,
     },
   });

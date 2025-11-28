@@ -9,45 +9,37 @@ import Work from "../entitys/workEntity.js";
 const limit = 5;
 
 //CREATE WORK
-  export const createWork = async ({ data, fileBuffer }) => {
-    
-    const searchEnterprise = await findEntrepriseById({
-      id: Number(data["id_entreprise"]),
-    });
-    if (!searchEnterprise) {
-      throw new Error("Enterprise not found or not exist");
-    }
-    const id = Number(data["id_manager"])
+export const createWork = async ({ data, fileBuffer }) => {
+  const searchEnterprise = await findEntrepriseById({
+    id: Number(data["id_entreprise"]),
+  });
+  if (!searchEnterprise) {
+    throw new Error("Enterprise not found or not exist");
+  }
+  const id = Number(data["id_manager"]);
 
-    const searchManager = await getUserId({ id: Number(data["id_manager"]) });
-  
+  const searchManager = await getUserId({ id: Number(data["id_manager"]) });
 
-    if (searchManager.userFunction !== "manager") {
-      throw new Error("User is not a manager");
-    }
-    const searchTender = await getUserId({ id: Number(data["tender_id"]) });
-    
+  if (searchManager.userFunction !== "manager") {
+    throw new Error("User is not a manager");
+  }
+  const searchTender = await getUserId({ id: Number(data["tender_id"]) });
 
+  if (searchTender.userFunction !== "tender") {
+    throw new Error("User is not a tender");
+  }
 
-    if (searchTender.userFunction !== "tender") {
-      throw new Error("User is not a tender");
-    } 
-    
-    const work = new Work(data);
+  const work = new Work(data);
 
-  
-
-    return await workModel.createWork({ data: work, file: fileBuffer });
-    
-    
-  };
+  return await workModel.createWork({ data: work, file: fileBuffer });
+};
 
 // GET ALL WORKES
 export const getAllWorks = async ({ enterprise_id }) => {
   enterprise_id = Number(enterprise_id);
 
   const allWorks = await workModel.getAllWorks({ enterprise_id });
- 
+
   const works = allWorks
     .slice(0, limit)
     .map((item) => new Work(item).smallInformation());
@@ -58,6 +50,12 @@ export const getAllWorks = async ({ enterprise_id }) => {
     };
   }
   return { works, page: "1 of 1" };
+};
+
+export const getWorkById = async ({ id }) => {
+  const searchWorkById = await workModel.getSpecificWork({ id });
+
+  return new Work(searchWorkById);
 };
 
 export const getPhotosByWorkId = async ({ id }) => {
@@ -96,7 +94,7 @@ export const getWorksPageId = async ({ pageNumber, enterprise_id }) => {
       const photoData = await workModel.getPhotosByWorkId({ id: item.id_work });
 
       if (photoData && photoData.photo) {
-        work.photo = photoData.photo
+        work.photo = photoData.photo;
       } else {
         work.photo = null;
       }

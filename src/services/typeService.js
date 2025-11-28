@@ -25,6 +25,12 @@ export const listAllTypes = async () => {
   return alltypes.map((item) => new Type(item));
 };
 
+export const getTypeById = async ({ id }) => {
+  const searchTypeById = await typeModel.getById({ id });
+
+  return new Type(searchTypeById);
+};
+
 export const updateType = async ({ id, data }) => {
   id = Number(id);
   const searchTpe = await typeModel.getById({ id });
