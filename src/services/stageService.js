@@ -35,6 +35,13 @@ export const listAllStageByWorkId = async ({ id_work }) => {
   return searchAllStagesByWorkId.map((stage) => new Stage(stage.stage));
 };
 
+export const listStageById = async ({ id }) => {
+  const searchStageById = await stageModel.stageByid({ id: id });
+
+  if (!searchStageById) throw new Error("Stage not found");
+  return searchStageById;
+};
+
 export const updateStage = async ({ id_stage, data }) => {
   id_stage = Number(id_stage);
   const searchStageById = await stageModel.stageByid({ id: id_stage });

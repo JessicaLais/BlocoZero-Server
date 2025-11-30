@@ -4,62 +4,60 @@ export default class Budget {
     id_work,
     id_category,
     id_type,
+    id_stage,
+    id_substage,
     code,
-    allocatedStage,
     name,
     unitMeasure,
-    weightLength,
-    stockQuantity,
-    Userfunction,
     cost,
+    quantityUsage,
     hours,
     extraHours,
     total,
+    Userfunction,
+    weightLength,
+    createdAt,
+    updatedAt,
   }) {
-    (this.id_budget = id_budget),
-      (this.id_work = id_work),
-      (this.id_category = id_category),
-      (this.id_type = id_type),
-      (this.code = code),
-      (this.allocatedStage = allocatedStage),
-      (this.name = name);
-    (this.cost = cost), (this.total = total);
-    if (code.includes("TRAB -")) {
-      (this.unitMeasure = "h"),
-        (this.weightLength = 0),
-        (this.stockQuantity = 0),
-        (this.Userfunction = Userfunction),
-        (this.hours = hours),
-        (this.extraHours = extraHours || 0);
-    }
+    this.id_budget = id_budget || null;
+    this.id_work = id_work;
+    this.id_category = id_category;
+    this.id_type = id_type;
+    this.id_stage = id_stage;
+    this.id_substage = id_substage;
+    this.code = code;
+    this.name = name;
+    this.unitMeasure = unitMeasure;
+    this.cost = cost;
+    this.quantityUsage = quantityUsage;
+    this.hours = hours;
+    this.extraHours = extraHours;
+    this.total = total;
+    this.Userfunction = Userfunction || null;
+    this.weightLength = weightLength;
+    this.createdAt = createdAt || null;
+    this.updatedAt = updatedAt || null;
 
     this.validate();
   }
 
   validate = () => {
-    if (!this.id_work) {
-      throw new Error("Missing required field: id_work");
-    }
-    if (!this.id_category) {
-      throw new Error("Missing required field: id_category");
-    }
-    if (!this.id_type) {
-      throw new Error("Missing required field: id_type");
-    }
-    if (!this.code) {
-      throw new Error("Missing required field: code");
-    }
-    if (!this.name) {
-      throw new Error("Missing required field: name");
-    }
+    const fields = {
+      id_work: this.id_work,
+      id_category: this.id_category,
+      id_type: this.id_type,
+      id_stage: this.id_stage,
+      id_substage: this.id_substage,
+    };
 
-    // Valida campos específicos para TRAB
-    if (this.code.includes("TRAB -")) {
-      if (!this.Userfunction) {
-        throw new Error("Missing required field: Userfunction");
-      }
-      if (!this.hours && this.hours !== 0) {
-        throw new Error("Missing required field: hours");
+    for (const [key, value] of Object.entries(fields)) {
+      if (
+        value === null ||
+        value === undefined ||
+        value === "" ||
+        (typeof value === "number" && isNaN(value))
+      ) {
+        throw new Error(`Missing or invalid field in Substage: ${key}`);
       }
     }
   };

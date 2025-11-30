@@ -55,6 +55,8 @@ export const getAllWorks = async ({ enterprise_id }) => {
 export const getWorkById = async ({ id }) => {
   const searchWorkById = await workModel.getSpecificWork({ id });
 
+  if (!searchWorkById) throw new Error("Work not found");
+
   return new Work(searchWorkById);
 };
 

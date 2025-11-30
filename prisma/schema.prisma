@@ -85,12 +85,16 @@ model Stage {
   budgetReports      BudgetReport[]
   workStages         WorkStage[]
   stageSubstages     StageSubstage[]
+
+  // 🔵 NOVO:
+  budgets            Budget[]
 }
+
 
 model Substage {
   id_substage       Int      @id @default(autoincrement())
   name              String
-  expDuration       Float
+  expDuration       DateTime
   progress          Float
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
@@ -101,22 +105,30 @@ model Substage {
   substageSchedules SubstageSchedule[]
   financialSchedules FinancialSchedule[]
   substageCategoryTypes SubstageCategoryType[]
+
+  // 🔵 NOVO:
+  budgets Budget[]
 }
+
 
 model Budget {
   id_budget         Int      @id @default(autoincrement())
   id_work           Int
   id_category       Int
   id_type           Int
+  
+  // 🔵 NOVO: Relacionar Budget com Stage e Substage
+  id_stage          Int?
+  id_substage       Int?
+
   code              String
   name              String
   unitMeasure       String
   cost              Float
-  stockQuantity     Int
+  quantityUsage     Int
   hours             Float
   extraHours        Float
   total             Float
-  allocatedStage    String
   Userfunction      String
   weightLength      Float
   createdAt         DateTime @default(now())
@@ -125,8 +137,12 @@ model Budget {
   work     Work     @relation(fields: [id_work], references: [id_work])
   category Category @relation(fields: [id_category], references: [id_category])
   type     Type     @relation(fields: [id_type], references: [id_type])
-  // REMOVIDO: stocks relation porque Stock não possui id_budget
+
+  // 🔵 NOVO: Relações diretas
+  stage    Stage?    @relation(fields: [id_stage], references: [id_stage])
+  substage Substage? @relation(fields: [id_substage], references: [id_substage])
 }
+
 
 model PhysicalSchedule {
   id_physicalSchedule Int @id @default(autoincrement())
@@ -227,6 +243,8 @@ model Stock {
   code                 String
   name                 String
   unitMeasure          String
+  costUnit             Float? 
+  costTotal            Float?                
   stockQuantity        Int
   weightLength         Float
   recentInflow         Int

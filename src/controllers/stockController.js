@@ -24,16 +24,9 @@ export const getDashboard = async (req, res) => {
 // POST Saída
 export const registerExit = async (req, res) => {
   try {
-    const { stockId, quantity, employeeName } = req.body;
-    if (!stockId || !quantity)
-      return res.status(400).json({ error: "Dados incompletos" });
-
-    const updatedItem = await stockService.registerExit({
-      stockId,
-      quantity: Number(quantity),
-      employeeName,
-    });
-    return res.status(200).json(updatedItem);
+    const data = req.body;
+    const registerExitItem = await stockService.registerExit({ data });
+    return res.status(200).json({ message: "sucess" });
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }
@@ -42,17 +35,11 @@ export const registerExit = async (req, res) => {
 // POST Entrada
 export const registerEntry = async (req, res) => {
   try {
-    const { stockId, quantity } = req.body;
-    if (!stockId || !quantity)
-      return res.status(400).json({ error: "Dados incompletos" });
-
-    const updatedItem = await stockService.registerEntry({
-      stockId,
-      quantity: Number(quantity),
-    });
-    return res.status(200).json(updatedItem);
+    const data = req.body;
+    const registerEntryItem = await stockService.registerEntry({ data });
+    return res.status(200).json({ message: "sucess" });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(400).json({ error: error.message });
   }
 };
 

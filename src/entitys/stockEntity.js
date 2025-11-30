@@ -7,6 +7,8 @@ export default class Stock {
     code,
     name,
     unitMeasure,
+    costUnit,
+    costTotal,
     stockQuantity,
     weightLength,
     recentInflow,
@@ -25,6 +27,8 @@ export default class Stock {
     this.code = code;
     this.name = name;
     this.unitMeasure = unitMeasure;
+    this.costUnit = costUnit;
+    this.costTotal = costTotal;
     this.stockQuantity = stockQuantity;
     this.weightLength = weightLength;
     this.recentInflow = recentInflow ? recentInflow : 0;
@@ -49,6 +53,7 @@ export default class Stock {
       stockQuantity: this.stockQuantity,
       weightLength: this.weightLength,
       minQuantity: this.minQuantity,
+      costUnit: this.costUnit,
     };
 
     for (const [key, value] of Object.entries(fields)) {

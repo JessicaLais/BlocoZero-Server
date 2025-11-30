@@ -28,9 +28,9 @@ export const createStockItem = async ({ data }) => {
   }
 
   if (stockExisting) throw new Error("Item already exists.");
+  data.costTotal = data.stockQuantity * data.costUnit;
 
   const stockEntity = new Stock(data);
-  console.log(stockEntity);
 
   return await stockModel.createStockItem({ data: stockEntity });
 };
@@ -42,52 +42,51 @@ export const getStockDashboard = async ({ id }) => {
   return getAllItemsByWorkId.map((item) => new Stock(item));
 };
 
-export const registerExit = async ({ stockId, quantity, employeeName }) => {
-  const stockItem = await stockModel.getStockItemById({ id: Number(stockId) });
-
-  if (!stockItem) throw new Error("Stock item not found.");
-
-  if (stockItem.actualQuantity < quantity) {
-    throw new Error(
-      `Insufficient stock. Available: ${stockItem.actualQuantity}`
-    );
-  }
-
-  const [updatedStock] = await prisma.$transaction([
-    prisma.stock.update({
-      where: { id_stock: Number(stockId) },
-      data: {
-        actualQuantity: { decrement: quantity },
-        cumulativeOutflow: { increment: quantity },
-        recentOutflow: { increment: quantity },
-      },
-    }),
-    prisma.materialUsage.create({
-      data: {
-        id_stock: Number(stockId),
-        employee_name: employeeName || "Unknown",
-        material_name: stockItem.name,
-        useDate: new Date(),
-        quantity: quantity,
-        type: stockItem.type?.name || "Material",
-        defect: "None",
-        code: 0,
-      },
-    }),
-  ]);
-
-  return updatedStock;
+export const getItemInStockById = async ({ id }) => {
+  const searchItemById = await stockModel.getStockItemById({
+    id,
+  });
+  if (!searchItemById) throw new Error("Item not found");
+  return searchItemById;
 };
 
-export const registerEntry = async ({ stockId, quantity }) => {
-  return await prisma.stock.update({
-    where: { id_stock: Number(stockId) },
-    data: {
-      actualQuantity: { increment: quantity },
-      cumulativeInflow: { increment: quantity },
-      recentInflow: { increment: quantity },
-    },
+export const registerExit = async ({ data }) => {
+  const searchItemById = await stockModel.getStockItemById({
+    id: data.id_item,
   });
+  if (!searchItemById) throw new Error("Item not found");
+
+  if (data.quantity > searchItemById.actualQuantity)
+    throw new Error("Invalid quantity");
+
+  //PODERÁ SER IMPLEMENTADA A LÓGICA DE SALVAR OS DADOS DO FUNCIONÁRIO QUE ESTÁ SOLICITANDO A RETIRADA DE MATERIAL, FUTURA TASK
+  const dataUpdateItem = {
+    stock_id: data.id_item,
+    actualQuantity: searchItemById.actualQuantity - data.quantity,
+    recentOutflow: data.quantity,
+    cumulativeOutflow: searchItemById.cumulativeOutflow + data.quantity,
+  };
+
+  return await stockModel.updateQuantityItemExit({
+    data: dataUpdateItem,
+  });
+};
+
+export const registerEntry = async ({ data }) => {
+  const searchItemById = await stockModel.getStockItemById({
+    id: data.id_item,
+  });
+  if (!searchItemById) throw new Error("Item not found");
+
+  //PODERÁ SER IMPLEMENTADA A LÓGICA DE SALVAR OS DADOS DO FUNCIONÁRIO QUE ESTÁ INSERINDO MAIS MATERIAIS, FUTURA TASK
+
+  const dataUpdateItem = {
+    stock_id: data.id_item,
+    actualQuantity: searchItemById.actualQuantity + data.quantity,
+    recentInflow: data.quantity,
+    cumulativeInflow: searchItemById.cumulativeInflow + data.quantity,
+  };
+  return await stockModel.updateQuantityItemEntry({ data: dataUpdateItem });
 };
 
 export const updateStockItem = async ({ data, id }) => {

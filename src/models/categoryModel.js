@@ -23,6 +23,14 @@ export const searchCategoryById = ({ id_category }) => {
   });
 };
 
+export const searchCategoryByTypeId = ({ id }) => {
+  return prisma.category.findFirst({
+    where: {
+      id_type: id,
+    },
+  });
+};
+
 export const listAllCategory = async () => {
   return prisma.category.findMany();
 };

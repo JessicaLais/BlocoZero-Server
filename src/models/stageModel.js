@@ -33,6 +33,7 @@ export const createRelationStageWithWork = async ({ id_stage, id_work }) => {
     },
   });
 };
+
 export const listAllStageByWorkId = async ({ id_work }) => {
   return await prisma.workStage.findMany({
     where: {

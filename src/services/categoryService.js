@@ -25,6 +25,8 @@ export const getCaterogyById = async ({ id }) => {
     id_category: id,
   });
 
+  if (!searchCategoryById) throw new Error("Category not found");
+
   return new Category(searchCategoryById);
 };
 
@@ -51,4 +53,14 @@ export const updateCategory = async ({ id, data }) => {
   const category = new Category(data);
 
   return categoryModel.updateCategory({ id_category: id, data });
+};
+
+export const listAllCategoryByIdType = async ({ id_type }) => {
+  const searchCategoryByTypeId = await categoryModel.searchCategoryByTypeId({
+    id: id_type,
+  });
+
+  if (!searchCategoryByTypeId) throw new Error("Category`s not found");
+
+  return searchCategoryByTypeId;
 };

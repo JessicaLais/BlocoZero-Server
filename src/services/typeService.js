@@ -27,7 +27,7 @@ export const listAllTypes = async () => {
 
 export const getTypeById = async ({ id }) => {
   const searchTypeById = await typeModel.getById({ id });
-
+  if (!searchTypeById) throw new Error("Type not found");
   return new Type(searchTypeById);
 };
 
@@ -55,4 +55,12 @@ export const deleteType = async ({ id }) => {
     throw new Error("type not found");
   }
   return typeModel.deleteType({ id });
+};
+
+export const getTypeByName = async ({ name }) => {
+  const searchTypeByName = await typeModel.getTypeByName({ data: name });
+  if (!searchTypeByName) {
+    throw new Error("Type not found");
+  }
+  return searchTypeByName;
 };
