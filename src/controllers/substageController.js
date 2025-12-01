@@ -9,3 +9,15 @@ export const createSubstage = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+export const listAllSubstageByIdStage = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const listAllSubstage = await substageService.listAllSubstageByIdStage({
+      id,
+    });
+    res.status(200).json({ subStages: listAllSubstage });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};

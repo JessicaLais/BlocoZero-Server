@@ -5,6 +5,7 @@ import * as stockController from "../controllers/stockController.js";
 const router = express.Router();
 
 router.post("/create", stockController.createItem);
+router.get("/list/:id", stockController.listStockByWorkId);
 router.get("/:id", stockController.getDashboard);
 
 router.post("/exit", stockController.registerExit);

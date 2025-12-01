@@ -5,4 +5,6 @@ const router = express.Router();
 
 router.post("/register", substageController.createSubstage);
 
+router.get("/list/:id", substageController.listAllSubstageByIdStage);
+
 export default router;

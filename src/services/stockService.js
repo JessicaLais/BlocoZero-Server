@@ -35,19 +35,14 @@ export const createStockItem = async ({ data }) => {
   return await stockModel.createStockItem({ data: stockEntity });
 };
 
-export const getStockDashboard = async ({ id }) => {
+export const listStockByWorkId = async ({ id }) => {
   id = Number(id);
-  const getAllItemsByWorkId = await stockModel.getAllStocksByWorkId({ id });
 
-  return getAllItemsByWorkId.map((item) => new Stock(item));
-};
+  const searchWorkById = await getWorkById({ id });
 
-export const getItemInStockById = async ({ id }) => {
-  const searchItemById = await stockModel.getStockItemById({
-    id,
-  });
-  if (!searchItemById) throw new Error("Item not found");
-  return searchItemById;
+  const listAllStock = await stockModel.getAllStocksByWorkId({ id });
+
+  return listAllStock.map((item) => new Stock(item));
 };
 
 export const registerExit = async ({ data }) => {
@@ -70,6 +65,23 @@ export const registerExit = async ({ data }) => {
   return await stockModel.updateQuantityItemExit({
     data: dataUpdateItem,
   });
+};
+
+// DESATIVADOS
+
+export const getItemInStockById = async ({ id }) => {
+  const searchItemById = await stockModel.getStockItemById({
+    id,
+  });
+  if (!searchItemById) throw new Error("Item not found");
+  return searchItemById;
+};
+
+export const getStockDashboard = async ({ id }) => {
+  id = Number(id);
+  const getAllItemsByWorkId = await stockModel.getAllStocksByWorkId({ id });
+
+  return getAllItemsByWorkId.map((item) => new Stock(item));
 };
 
 export const registerEntry = async ({ data }) => {

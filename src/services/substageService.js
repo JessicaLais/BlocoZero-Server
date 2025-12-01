@@ -7,6 +7,7 @@ import { createBudgetStock } from "./budgetService.js";
 import { getTypeByName } from "./typeService.js";
 import { listAllCategoryByIdType } from "./categoryService.js";
 import { createBudgetWorked } from "./budgetService.js";
+import { getTypeById } from "./typeService.js";
 import Substage from "../entitys/substageEntitys.js";
 
 export const createSubstage = async ({ data }) => {
@@ -117,4 +118,13 @@ export const getSubstageById = async ({ id }) => {
   const searchSubstageById = await substageModel.getSubstageById({ id });
   if (!searchSubstageById) throw new Error("Substage not found");
   return searchSubstageById;
+};
+
+export const listAllSubstageByIdStage = async ({ id }) => {
+  id = Number(id);
+  const searchTypeByid = await getTypeById({ id });
+
+  const listAllSubstage = await substageModel.allSubstagesByStageId({ id });
+
+  return listAllSubstage.map((item) => new Substage(item.substage));
 };

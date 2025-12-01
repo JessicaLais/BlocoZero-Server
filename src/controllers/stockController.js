@@ -10,6 +10,17 @@ export const createItem = async (req, res) => {
   }
 };
 
+export const listStockByWorkId = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const listStock = await stockService.listStockByWorkId({ id });
+
+    await res.status(200).json({ stock: listStock });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 export const getDashboard = async (req, res) => {
   try {
     const id = req.params.id;

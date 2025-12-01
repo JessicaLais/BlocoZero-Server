@@ -81,8 +81,15 @@ export const getSubstageById = async ({ id }) => {
   });
 };
 
-export const allSubstages = async () => {
-  return await prisma.substage.findMany();
+export const allSubstagesByStageId = async ({ id }) => {
+  return await prisma.stageSubstage.findMany({
+    where: {
+      stageId: id,
+    },
+    include: {
+      substage: true,
+    },
+  });
 };
 
 export const updateSubstage = async ({ data, id }) => {
