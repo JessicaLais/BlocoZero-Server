@@ -9,6 +9,7 @@ import categoryRouter from "./src/routes/categoryRouter.js";
 import stageRouter from "./src/routes/stageRouter.js";
 import substage from "./src/routes/substageRouter.js";
 import stockRouter from "./src/routes/stockRouter.js";
+import physicalScheduleRouter from "./src/routes/scheduleRouter.js";
 
 import cors from "cors";
 import * as middlewares from "./src/middlewares/verifyMiddlewares.js";
@@ -33,6 +34,7 @@ app.use("/category", categoryRouter);
 app.use("/stage", stageRouter);
 app.use("/substage", substage);
 app.use("/stock", stockRouter);
+app.use("/physicalSchedule", physicalScheduleRouter);
 
 app.use((req, res) => {
   middlewares.verifyRoutes(req, res);

@@ -15,7 +15,14 @@ export const createSubstage = async ({ data }) => {
     name: data.name,
   });
   if (searchSubstageByName) throw new Error("Name already usage");
-
+  if (!data.expDuration) {
+    throw new Error("The expDuration is required.");
+  }
+  const startDate = new Date(); 
+  const endDate = new Date(data.expDuration);
+  if (endDate < startDate) {
+    throw new Error("The expDuration cannot be less than today.");
+  }
   const searchStageById = await listStageById({ id: data.stage_id });
 
   for (const user of data.employees) {
@@ -109,7 +116,22 @@ export const createSubstage = async ({ data }) => {
     const createBudgetStoc = await createBudgetStock({ data: budgetStockData });
   }
 
-  //IMPLEMENTAR A LÓGICA DO CALENDÁRIO E ETC...
+const diffTime = Math.abs(endDate - startDate);
+  const durationInDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+
+  const physicalSchedule = await substageModel.findOrCreatePhysicalSchedule({
+    id_stage: searchStageById.id_stage,
+    id_work: searchStageById.work_id || searchTypeWorked.work_id 
+  });
+  
+  await substageModel.createSubstageSchedule({
+    id_substage: newSubstage.id_substage,
+    id_physicalSchedule: physicalSchedule.id_physicalSchedule,
+    expStartDate: startDate,
+    expEndDate: endDate,
+    expDuration: durationInDays,
+    progress: data.progress || 0.0
+  });
 
   return true;
 };

@@ -1,8 +1,8 @@
-/*import express from "express";
-import * as scheduleController from "../controllers/scheduleController.js";
+import express from "express";
+import * as physicalScheduleController from "../controllers/physicalScheduleController.js";
 
 const router = express.Router();
 
-router.get("/:workId", scheduleController.getSchedule);
+router.get("/physicalSchedule/:id_work", physicalScheduleController.getSchedule);
 
-export default router;*/
+export default router;

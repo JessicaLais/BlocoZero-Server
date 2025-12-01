@@ -73,6 +73,40 @@ export const createRelationSubstageWithItem = async ({
   });
 };
 
+export const findOrCreatePhysicalSchedule = async ({ id_stage, id_work }) => {
+  let physicalSchedule = await prisma.physicalSchedule.findFirst({
+    where: { id_stage, id_work }
+  });
+
+  if (!physicalSchedule) {
+    physicalSchedule = await prisma.physicalSchedule.create({
+      data: {
+        stage: { connect: { id_stage } },
+        work: { connect: { id_work } } 
+      }
+    });
+  }
+  return physicalSchedule;
+};
+
+
+export const createSubstageSchedule = async (data) => {
+  return await prisma.substageSchedule.create({
+    data: {
+      substage: {
+        connect: { id_substage: data.id_substage },
+      },
+      physicalSchedule: {
+        connect: { id_physicalSchedule: data.id_physicalSchedule },
+      },
+      expStartDate: data.expStartDate,
+      expEndDate: data.expEndDate,
+      expDuration: data.expDuration,
+      progress: data.progress || 0.0
+    },
+  });
+};
+
 export const getSubstageById = async ({ id }) => {
   return await prisma.substage.findFirst({
     where: {
@@ -92,6 +126,7 @@ export const allSubstagesByStageId = async ({ id }) => {
   });
 };
 
+
 export const updateSubstage = async ({ data, id }) => {
   return await prisma.substage.update({
     where: {
@@ -109,6 +144,6 @@ export const deleteSubstage = async ({ id }) => {
   return await prisma.substage.delete({
     where: {
       id_substage: id,
-    },
+    },n
   });
 };
