@@ -3,7 +3,7 @@ export const createType = async (req, res) => {
   try {
     const data = req.body;
     const type = await typeService.createType({ data });
-    res.status(200).json({ message: "sucess" });
+    res.status(201).json({ message: "sucess" });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

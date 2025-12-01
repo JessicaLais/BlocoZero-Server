@@ -25,7 +25,7 @@ export const updateStage = async (req, res) => {
     const id_stage = req.params.id;
     const data = req.body;
     const updateStage = await stageService.updateStage({ id_stage, data });
-    res.status(200).json({ message: "sucess" });
+    res.status(201).json({ message: "sucess" });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

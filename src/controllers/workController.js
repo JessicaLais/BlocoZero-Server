@@ -6,7 +6,7 @@ export const createWork = async (req, res) => {
   try {
     file = req.file;
     const data = req.body;
-    
+
     if (!file) {
       throw new Error("Arquivo não enviado");
     }
@@ -15,9 +15,8 @@ export const createWork = async (req, res) => {
     await workServices.createWork({ data, fileBuffer });
 
     fs.unlinkSync(file.path);
-    res.status(200).json({ response: "success" });
+    res.status(201).json({ response: "success" });
   } catch (error) {
-        
     if (file && file.path) {
       fs.unlinkSync(file.path);
     }
@@ -46,7 +45,7 @@ export const getWorksPageId = async (req, res) => {
       pageNumber,
       enterprise_id,
     });
-   
+
     const worksWithPhotos = works.works.map((work) => {
       if (work.photo) {
         const photoBuffer = Buffer.from(work.photo);
@@ -67,7 +66,6 @@ export const getWorksPageId = async (req, res) => {
     res.status(500).json({ error: "Erro ao buscar obras." });
   }
 };
-
 
 export const getSpecificWork = async (req, res) => {
   try {

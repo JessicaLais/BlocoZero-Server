@@ -26,7 +26,7 @@ export const registerExit = async (req, res) => {
   try {
     const data = req.body;
     const registerExitItem = await stockService.registerExit({ data });
-    return res.status(200).json({ message: "sucess" });
+    return res.status(201).json({ message: "sucess" });
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }

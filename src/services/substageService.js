@@ -10,12 +10,11 @@ import { createBudgetWorked } from "./budgetService.js";
 import Substage from "../entitys/substageEntitys.js";
 
 export const createSubstage = async ({ data }) => {
-  /*
   const searchSubstageByName = await substageModel.findSubstageByName({
     name: data.name,
   });
   if (searchSubstageByName) throw new Error("Name already usage");
-*/
+
   const searchStageById = await listStageById({ id: data.stage_id });
 
   for (const user of data.employees) {
@@ -54,7 +53,7 @@ export const createSubstage = async ({ data }) => {
       hours = 8;
       extraHours = user.hours_worked - 8;
     } else {
-      hours = 8;
+      hours = user.hours_worked;
     }
 
     const budgetWorkedData = {
@@ -70,16 +69,15 @@ export const createSubstage = async ({ data }) => {
       quantityUsage: 0,
       hours: hours,
       extraHours: extraHours,
-      Userfunction: "",
+      Userfunction: user.userfunction,
       weightLength: 0,
     };
     const createBudgetWorke = await createBudgetWorked({
       data: budgetWorkedData,
     });
   }
-  /*
+
   for (const item of data.items_usage) {
-   
     const createRelationSubstageWithItem =
       await substageModel.createRelationSubstageWithItem({
         id_substage: newSubstage.id_substage,
@@ -109,7 +107,7 @@ export const createSubstage = async ({ data }) => {
     };
     const createBudgetStoc = await createBudgetStock({ data: budgetStockData });
   }
- */
+
   //IMPLEMENTAR A LÓGICA DO CALENDÁRIO E ETC...
 
   return true;
