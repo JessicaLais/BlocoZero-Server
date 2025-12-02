@@ -3,6 +3,6 @@ import * as physicalScheduleController from "../controllers/physicalScheduleCont
 
 const router = express.Router();
 
-router.get("/physicalSchedule/:id_work", physicalScheduleController.getSchedule);
+router.get("/list/:id_work", physicalScheduleController.getSchedule);
 
 export default router;

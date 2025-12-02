@@ -160,8 +160,9 @@ export const listAllSubstageByIdStage = async ({ id }) => {
 
       return result;
     })
+  
   );
-
+  
   //const searchTypeByid = await getTypeById({ id });
 
   const listAllSubstage = await substageModel.allSubstagesByStageId({ id });
@@ -169,4 +170,35 @@ export const listAllSubstageByIdStage = async ({ id }) => {
   return listAllSubstage;
 
   return listAllSubstage.map((item) => new Substage(item.substage));
+  
+};
+
+export const updateSubstage = async ({ id, data }) => {
+  const currentSchedule = await substageModel.findScheduleBySubstageId(id);
+
+  // Se o usuário mandou uma nova "expDuration" (Data Final), recalculamos o cronograma
+  if (data.expDuration && currentSchedule) {
+      const startDate = new Date(); // Mantendo sua lógica: Início é Hoje
+      const endDate = new Date(data.expDuration);
+      const diffTime = Math.abs(endDate - startDate);
+      const durationInDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      return await substageModel.updateSubstageFull({
+          id_substage: id,
+          id_schedule: currentSchedule.id_substageSchedule,
+          dataSubstage: { name: data.name, expDuration: data.expDuration, progress: data.progress },
+          dataSchedule: { expStartDate: startDate, expEndDate: endDate, expDuration: durationInDays, progress: data.progress }
+      });
+  }
+  
+  // Se não mandou data nova, atualiza só o básico
+  return await substageModel.updateSubstage({ id, data });
+};
+
+export const deleteSubstageById = async (id) => {
+  const existing = await substageModel.getSubstageById({ id });
+  if (!existing) throw new Error("Substage not found");
+  
+  // Chama a função nova do Model que deleta em cascata
+  return await substageModel.deleteFullSubstage({ id });
 };
