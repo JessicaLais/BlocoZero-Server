@@ -9,9 +9,10 @@ export const createType = async (req, res) => {
   }
 };
 
-export const listAllTypes = async (req, res) => {
+export const listAllTypesByWorkId = async (req, res) => {
   try {
-    const allTypes = await typeService.listAllTypes();
+    const id = req.params.id;
+    const allTypes = await typeService.listAllTypesByWorkId({ id });
     res.status(200).json({ types: allTypes });
   } catch (error) {
     res.status(400).json({ error: error.message });

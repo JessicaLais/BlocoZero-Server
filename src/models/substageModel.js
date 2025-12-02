@@ -35,9 +35,13 @@ export const createRelationSubstageWithStage = async ({
 export const createRelationSubstageWithUser = async ({
   id_substage,
   id_user,
+  hours_worked,
+  userfunction,
 }) => {
   return await prisma.substageEmploye.create({
     data: {
+      hours: hours_worked,
+      userFunction: userfunction,
       substage: {
         connect: {
           id_substage: id_substage,
@@ -75,20 +79,19 @@ export const createRelationSubstageWithItem = async ({
 
 export const findOrCreatePhysicalSchedule = async ({ id_stage, id_work }) => {
   let physicalSchedule = await prisma.physicalSchedule.findFirst({
-    where: { id_stage, id_work }
+    where: { id_stage, id_work },
   });
 
   if (!physicalSchedule) {
     physicalSchedule = await prisma.physicalSchedule.create({
       data: {
         stage: { connect: { id_stage } },
-        work: { connect: { id_work } } 
-      }
+        work: { connect: { id_work } },
+      },
     });
   }
   return physicalSchedule;
 };
-
 
 export const createSubstageSchedule = async (data) => {
   return await prisma.substageSchedule.create({
@@ -102,7 +105,7 @@ export const createSubstageSchedule = async (data) => {
       expStartDate: data.expStartDate,
       expEndDate: data.expEndDate,
       expDuration: data.expDuration,
-      progress: data.progress || 0.0
+      progress: data.progress || 0.0,
     },
   });
 };
@@ -121,11 +124,16 @@ export const allSubstagesByStageId = async ({ id }) => {
       stageId: id,
     },
     include: {
-      substage: true,
+      substage: {
+        include: {
+          substageEmployes: true,
+          substageStocks: true,
+          substageSchedules: true,
+        },
+      },
     },
   });
 };
-
 
 export const updateSubstage = async ({ data, id }) => {
   return await prisma.substage.update({
@@ -144,6 +152,7 @@ export const deleteSubstage = async ({ id }) => {
   return await prisma.substage.delete({
     where: {
       id_substage: id,
-    },n
+    },
+    n,
   });
 };

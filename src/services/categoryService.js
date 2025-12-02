@@ -1,6 +1,8 @@
 import Category from "../entitys/categoryEntity.js";
 import * as categoryModel from "../models/categoryModel.js";
 import { getById } from "../models/typeModel.js";
+import { getWorkById } from "./workServices.js";
+import { listAllTypesByWorkId } from "./typeService.js";
 
 export const register = async ({ data }) => {
   const searchCategoryByName = await categoryModel.searchCategoryByName({
@@ -18,6 +20,47 @@ export const register = async ({ data }) => {
   const category = new Category(data);
 
   return categoryModel.register({ data: category });
+};
+
+export const listAllCategoryByIdType = async ({ id }) => {
+  id = Number(id);
+  const searchTypeById = await getById({ id });
+
+  if (!searchTypeById) {
+    throw new Error("Type not found");
+  }
+
+  const getAllCategoriesByTypeId = await categoryModel.searchCategoryByTypeId({
+    id,
+  });
+
+  return getAllCategoriesByTypeId.map((category) => new Category(category));
+};
+
+export const listAllCategoryByWorkId = async ({ id }) => {
+  id = Number(id);
+
+  const searchWorkById = await getWorkById({ id });
+  const types = await listAllTypesByWorkId({ id });
+
+  const categories = await Promise.all(
+    types.map(async (type) => {
+      const result = await categoryModel.searchCategoryByTypeId({
+        id: type.id,
+      });
+
+      // Caso a query retorne lista
+      if (Array.isArray(result)) {
+        return result.map((c) => new Category(c));
+      }
+
+      // Caso retorne item único
+      return new Category(result);
+    })
+  );
+
+  // Se quiser um array "flat" (sem arrays dentro de arrays)
+  return categories.flat();
 };
 
 export const getCaterogyById = async ({ id }) => {
@@ -53,14 +96,4 @@ export const updateCategory = async ({ id, data }) => {
   const category = new Category(data);
 
   return categoryModel.updateCategory({ id_category: id, data });
-};
-
-export const listAllCategoryByIdType = async ({ id_type }) => {
-  const searchCategoryByTypeId = await categoryModel.searchCategoryByTypeId({
-    id: id_type,
-  });
-
-  if (!searchCategoryByTypeId) throw new Error("Category`s not found");
-
-  return searchCategoryByTypeId;
 };

@@ -11,9 +11,14 @@ export const register = async (req, res) => {
   }
 };
 
-export const listAllCategory = async (req, res) => {
-  const categories = await categoryService.listAllCategory();
-  res.status(200).json({ categories });
+export const listAllCategoryByWorkId = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const categories = await categoryService.listAllCategoryByWorkId({ id });
+    res.status(200).json({ categories });
+  } catch {
+    res.status(400).json({ error: error.message });
+  }
 };
 
 export const updateCategory = async (req, res) => {

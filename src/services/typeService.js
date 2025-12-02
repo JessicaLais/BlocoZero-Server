@@ -1,6 +1,7 @@
 import Type from "../entitys/typeEntity.js";
 import * as typeModel from "../models/typeModel.js";
-import { getSpecificWork } from "../models/worksModel.js";
+//import { getSpecificWork } from "../models/worksModel.js";
+import { getWorkById } from "./workServices.js";
 
 export const createType = async ({ data }) => {
   const searchTypeByName = await typeModel.getTypeByName({ data });
@@ -8,19 +9,18 @@ export const createType = async ({ data }) => {
     throw new Error("Existing type");
   }
 
-  const searchWorkById = await getSpecificWork({ id: data.work_id });
-
-  if (!searchWorkById) {
-    throw new Error("work not found");
-  }
+  const searchWorkById = await getWorkById({ id: data.work_id });
 
   const type = new Type(data);
 
   return await typeModel.createType({ data: type });
 };
 
-export const listAllTypes = async () => {
-  const alltypes = await typeModel.listAllTypes();
+export const listAllTypesByWorkId = async ({ id }) => {
+  id = Number(id);
+  const searchWorkById = await getWorkById({ id });
+
+  const alltypes = await typeModel.listAllTypesByWorkId({ id });
 
   return alltypes.map((item) => new Type(item));
 };
@@ -37,12 +37,7 @@ export const updateType = async ({ id, data }) => {
   if (!searchTpe) {
     throw new Error("type not found");
   }
-
-  const searchWorkById = await getSpecificWork({ id: data.work_id });
-
-  if (!searchWorkById) {
-    throw new Error("work not found");
-  }
+  const searchWorkById = await getWorkById({ id: data.work_id });
 
   const type = new Type(data);
   return typeModel.updateType({ id, data });

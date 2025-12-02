@@ -7,7 +7,7 @@ const router = express.Router();
 //Register Usages System
 router.post("/register", verifyBody, categoryController.register);
 
-router.get("/list", categoryController.listAllCategory);
+router.get("/list/:id", categoryController.listAllCategoryByWorkId);
 
 router.put("/update/:id", verifyBody, categoryController.updateCategory);
 

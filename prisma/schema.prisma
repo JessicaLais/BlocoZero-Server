@@ -317,6 +317,8 @@ model StageSubstage {
 model SubstageEmploye {
   substageId Int @map("id_substage")
   userId     Int @map("id_user")
+  hours      Float @default(0)
+  userFunction String @default("none")
   assignedAt DateTime @default(now())
 
   substage Substage @relation(fields: [substageId], references: [id_substage])

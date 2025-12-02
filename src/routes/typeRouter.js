@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post("/register", verifyBody, typeController.createType);
 
-router.get("/list", typeController.listAllTypes);
+router.get("/list/:id", typeController.listAllTypesByWorkId);
 
 router.put("/update/:id", verifyBody, typeController.updateType);
 

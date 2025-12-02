@@ -8,17 +8,18 @@ import { getTypeByName } from "./typeService.js";
 import { listAllCategoryByIdType } from "./categoryService.js";
 import { createBudgetWorked } from "./budgetService.js";
 import { getTypeById } from "./typeService.js";
+import { listAllTypesByWorkId } from "./typeService.js";
 import Substage from "../entitys/substageEntitys.js";
 
 export const createSubstage = async ({ data }) => {
   const searchSubstageByName = await substageModel.findSubstageByName({
     name: data.name,
   });
-  if (searchSubstageByName) throw new Error("Name already usage");
+  //if (searchSubstageByName) throw new Error("Name already usage");
   if (!data.expDuration) {
     throw new Error("The expDuration is required.");
   }
-  const startDate = new Date(); 
+  const startDate = new Date();
   const endDate = new Date(data.expDuration);
   if (endDate < startDate) {
     throw new Error("The expDuration cannot be less than today.");
@@ -36,6 +37,7 @@ export const createSubstage = async ({ data }) => {
   const substage = new Substage(data);
 
   const newSubstage = await substageModel.createSubstage({ data: substage });
+
   const createRelationSubstageWithStage =
     await substageModel.createRelationSubstageWithStage({
       id_stage: searchStageById.id_stage,
@@ -45,14 +47,18 @@ export const createSubstage = async ({ data }) => {
   const searchTypeWorked = await getTypeByName({ name: "Trabalho" });
 
   const searchCaterogyWorked = await listAllCategoryByIdType({
-    id_type: searchTypeWorked.id_type,
+    id: searchTypeWorked.id_type,
   });
+
+  console.log();
 
   for (const user of data.employees) {
     const createRelationSubstageWithUser =
       await substageModel.createRelationSubstageWithUser({
         id_substage: newSubstage.id_substage,
         id_user: user.user_id,
+        hours_worked: user.hours_worked,
+        userfunction: user.userfunction,
       });
 
     let hours = 0;
@@ -66,7 +72,7 @@ export const createSubstage = async ({ data }) => {
 
     const budgetWorkedData = {
       id_work: searchTypeWorked.work_id,
-      id_category: searchCaterogyWorked.id_category,
+      id_category: searchCaterogyWorked[0].id,
       id_type: searchTypeWorked.id_type,
       id_stage: searchStageById.id_stage,
       id_substage: newSubstage.id_substage,
@@ -80,6 +86,7 @@ export const createSubstage = async ({ data }) => {
       Userfunction: user.userfunction,
       weightLength: 0,
     };
+
     const createBudgetWorke = await createBudgetWorked({
       data: budgetWorkedData,
     });
@@ -116,21 +123,21 @@ export const createSubstage = async ({ data }) => {
     const createBudgetStoc = await createBudgetStock({ data: budgetStockData });
   }
 
-const diffTime = Math.abs(endDate - startDate);
-  const durationInDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+  const diffTime = Math.abs(endDate - startDate);
+  const durationInDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   const physicalSchedule = await substageModel.findOrCreatePhysicalSchedule({
     id_stage: searchStageById.id_stage,
-    id_work: searchStageById.work_id || searchTypeWorked.work_id 
+    id_work: searchStageById.work_id || searchTypeWorked.work_id,
   });
-  
+
   await substageModel.createSubstageSchedule({
     id_substage: newSubstage.id_substage,
     id_physicalSchedule: physicalSchedule.id_physicalSchedule,
     expStartDate: startDate,
     expEndDate: endDate,
     expDuration: durationInDays,
-    progress: data.progress || 0.0
+    progress: data.progress || 0.0,
   });
 
   return true;
@@ -144,9 +151,22 @@ export const getSubstageById = async ({ id }) => {
 
 export const listAllSubstageByIdStage = async ({ id }) => {
   id = Number(id);
-  const searchTypeByid = await getTypeById({ id });
+
+  const searchTypeByWorkId = await listAllTypesByWorkId({ id });
+
+  const substages = await Promise.all(
+    searchTypeByWorkId.map(async (type) => {
+      const result = await substageModel.allSubstagesByStageId({ id: type.id });
+
+      return result;
+    })
+  );
+
+  //const searchTypeByid = await getTypeById({ id });
 
   const listAllSubstage = await substageModel.allSubstagesByStageId({ id });
+
+  return listAllSubstage;
 
   return listAllSubstage.map((item) => new Substage(item.substage));
 };

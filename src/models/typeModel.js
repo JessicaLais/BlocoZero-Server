@@ -25,8 +25,12 @@ export const getById = async ({ id }) => {
   });
 };
 
-export const listAllTypes = async () => {
-  return prisma.type.findMany({});
+export const listAllTypesByWorkId = async ({ id }) => {
+  return prisma.type.findMany({
+    where: {
+      work_id: id,
+    },
+  });
 };
 
 export const updateType = async ({ id, data }) => {

@@ -24,7 +24,7 @@ export const searchCategoryById = ({ id_category }) => {
 };
 
 export const searchCategoryByTypeId = ({ id }) => {
-  return prisma.category.findFirst({
+  return prisma.category.findMany({
     where: {
       id_type: id,
     },
