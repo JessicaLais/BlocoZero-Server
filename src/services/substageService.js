@@ -176,29 +176,53 @@ export const listAllSubstageByIdStage = async ({ id }) => {
 export const updateSubstage = async ({ id, data }) => {
   const currentSchedule = await substageModel.findScheduleBySubstageId(id);
 
-  // Se o usuário mandou uma nova "expDuration" (Data Final), recalculamos o cronograma
-  if (data.expDuration && currentSchedule) {
-      const startDate = new Date(); // Mantendo sua lógica: Início é Hoje
-      const endDate = new Date(data.expDuration);
+  // Se o usuário mandou uma nova data (expDuration)
+  if (data.expDuration) {
+      const startDate = new Date(); // Início = Hoje (Sua lógica)
+      
+      // CORREÇÃO: Transformamos a string em Objeto Date
+      const endDate = new Date(data.expDuration); 
+      
+      // Validação básica para evitar datas inválidas
+      if (isNaN(endDate.getTime())) {
+          throw new Error("Data inválida. Use o formato YYYY-MM-DD.");
+      }
+
       const diffTime = Math.abs(endDate - startDate);
       const durationInDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-      return await substageModel.updateSubstageFull({
-          id_substage: id,
-          id_schedule: currentSchedule.id_substageSchedule,
-          dataSubstage: { name: data.name, expDuration: data.expDuration, progress: data.progress },
-          dataSchedule: { expStartDate: startDate, expEndDate: endDate, expDuration: durationInDays, progress: data.progress }
-      });
+      // Se existe cronograma, atualiza tudo (Full)
+      if (currentSchedule) {
+          return await substageModel.updateSubstageFull({
+              id_substage: id,
+              id_schedule: currentSchedule.id_substageSchedule,
+              dataSubstage: { 
+                  name: data.name, 
+                  expDuration: endDate, // <--- AGORA VAI O OBJETO DATE, NÃO A STRING
+                  progress: data.progress 
+              },
+              dataSchedule: { 
+                  expStartDate: startDate, 
+                  expEndDate: endDate, 
+                  expDuration: durationInDays, 
+                  progress: data.progress 
+              }
+          });
+      }
   }
   
-  // Se não mandou data nova, atualiza só o básico
-  return await substageModel.updateSubstage({ id, data });
+  const updateData = {
+      name: data.name,
+      progress: data.progress,
+      expDuration: data.expDuration ? new Date(data.expDuration) : undefined 
+  };
+
+  return await substageModel.updateSubstage({ id, data: updateData });
 };
 
 export const deleteSubstageById = async (id) => {
   const existing = await substageModel.getSubstageById({ id });
   if (!existing) throw new Error("Substage not found");
   
-  // Chama a função nova do Model que deleta em cascata
   return await substageModel.deleteFullSubstage({ id });
 };

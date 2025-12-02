@@ -11,10 +11,9 @@ export const createSubstage = async (req, res) => {
   }
 };
 
-// List (Mantido + Conversão de ID)
 export const listAllSubstageByIdStage = async (req, res) => {
   try {
-    const id = Number(req.params.id); // Importante converter para Número
+    const id = Number(req.params.id); 
     if (isNaN(id)) throw new Error("ID inválido");
 
     const listAllSubstage = await substageService.listAllSubstageByIdStage({ id });
