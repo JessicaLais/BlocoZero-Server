@@ -32,10 +32,10 @@ export const updateCategory = async (req, res) => {
   }
 };
 
-export const deleteCategory = (req, res) => {
+export const deleteCategory = async (req, res) => {
   try {
     const id = req.params.id;
-
+    const deleteCatego = await categoryService.deleteCategoryById({ id });
     res.status(200).json({ response: "sucess" });
   } catch (error) {
     res.status(400).json({ error: error.message });

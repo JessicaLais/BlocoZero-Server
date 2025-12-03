@@ -44,3 +44,35 @@ export const updateCategory = async ({ id_category, data }) => {
     },
   });
 };
+
+export const deleteCategoryById = async ({ id }) => {
+  return await prisma.$transaction(async (tx) => {
+    await tx.materialUsage.deleteMany({
+      where: { stock: { id_category: id } },
+    });
+
+    await tx.substageStock.deleteMany({
+      where: { materialStock: { id_category: id } },
+    });
+
+    await tx.budget.deleteMany({
+      where: { id_category: id },
+    });
+
+    await tx.equipmentRequest.deleteMany({
+      where: { id_category: id },
+    });
+
+    await tx.substageCategoryType.deleteMany({
+      where: { categoryId: id },
+    });
+
+    await tx.stock.deleteMany({
+      where: { id_category: id },
+    });
+
+    return await tx.category.delete({
+      where: { id_category: id },
+    });
+  });
+};

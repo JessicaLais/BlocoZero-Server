@@ -11,6 +11,6 @@ router.get("/list/:id", categoryController.listAllCategoryByWorkId);
 
 router.put("/update/:id", verifyBody, categoryController.updateCategory);
 
-router.delete("/delete/:id", categoryController.updateCategory);
+router.delete("/delete/:id", categoryController.deleteCategory);
 
 export default router;
