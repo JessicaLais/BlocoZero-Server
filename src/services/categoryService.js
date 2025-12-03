@@ -99,7 +99,6 @@ export const updateCategory = async ({ id, data }) => {
 };
 
 export const deleteCategoryById = async ({ id }) => {
-  console.log(id);
   id = Number(id);
   const searchCategoryById = await categoryModel.searchCategoryById({
     id_category: id,
