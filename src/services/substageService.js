@@ -9,6 +9,7 @@ import { listAllCategoryByIdType } from "./categoryService.js";
 import { createBudgetWorked } from "./budgetService.js";
 import { getTypeById } from "./typeService.js";
 import { listAllTypesByWorkId } from "./typeService.js";
+import { listAllStageByWorkId } from "./stageService.js";
 import Substage from "../entitys/substageEntitys.js";
 
 export const createSubstage = async ({ data }) => {
@@ -152,25 +153,25 @@ export const getSubstageById = async ({ id }) => {
 export const listAllSubstageByIdStage = async ({ id }) => {
   id = Number(id);
 
-  const searchTypeByWorkId = await listAllTypesByWorkId({ id });
+  const searchStagesyWorkId = await listAllStageByWorkId({ id_work: id });
 
   const substages = await Promise.all(
-    searchTypeByWorkId.map(async (type) => {
-      const result = await substageModel.allSubstagesByStageId({ id: type.id });
+    searchStagesyWorkId.map(async (stage) => {
+      const result = await substageModel.allSubstagesByStageId({
+        id: stage.id_stage,
+      });
 
       return result;
     })
-  
   );
-  
+
   //const searchTypeByid = await getTypeById({ id });
 
-  const listAllSubstage = await substageModel.allSubstagesByStageId({ id });
+  //const listAllSubstage = await substageModel.allSubstagesByStageId({ id });
 
-  return listAllSubstage;
+  return substages;
 
   return listAllSubstage.map((item) => new Substage(item.substage));
-  
 };
 
 export const updateSubstage = async ({ id, data }) => {
@@ -178,43 +179,43 @@ export const updateSubstage = async ({ id, data }) => {
 
   // Se o usuário mandou uma nova data (expDuration)
   if (data.expDuration) {
-      const startDate = new Date(); // Início = Hoje (Sua lógica)
-      
-      // CORREÇÃO: Transformamos a string em Objeto Date
-      const endDate = new Date(data.expDuration); 
-      
-      // Validação básica para evitar datas inválidas
-      if (isNaN(endDate.getTime())) {
-          throw new Error("Data inválida. Use o formato YYYY-MM-DD.");
-      }
+    const startDate = new Date(); // Início = Hoje (Sua lógica)
 
-      const diffTime = Math.abs(endDate - startDate);
-      const durationInDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    // CORREÇÃO: Transformamos a string em Objeto Date
+    const endDate = new Date(data.expDuration);
 
-      // Se existe cronograma, atualiza tudo (Full)
-      if (currentSchedule) {
-          return await substageModel.updateSubstageFull({
-              id_substage: id,
-              id_schedule: currentSchedule.id_substageSchedule,
-              dataSubstage: { 
-                  name: data.name, 
-                  expDuration: endDate, // <--- AGORA VAI O OBJETO DATE, NÃO A STRING
-                  progress: data.progress 
-              },
-              dataSchedule: { 
-                  expStartDate: startDate, 
-                  expEndDate: endDate, 
-                  expDuration: durationInDays, 
-                  progress: data.progress 
-              }
-          });
-      }
+    // Validação básica para evitar datas inválidas
+    if (isNaN(endDate.getTime())) {
+      throw new Error("Data inválida. Use o formato YYYY-MM-DD.");
+    }
+
+    const diffTime = Math.abs(endDate - startDate);
+    const durationInDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    // Se existe cronograma, atualiza tudo (Full)
+    if (currentSchedule) {
+      return await substageModel.updateSubstageFull({
+        id_substage: id,
+        id_schedule: currentSchedule.id_substageSchedule,
+        dataSubstage: {
+          name: data.name,
+          expDuration: endDate, // <--- AGORA VAI O OBJETO DATE, NÃO A STRING
+          progress: data.progress,
+        },
+        dataSchedule: {
+          expStartDate: startDate,
+          expEndDate: endDate,
+          expDuration: durationInDays,
+          progress: data.progress,
+        },
+      });
+    }
   }
-  
+
   const updateData = {
-      name: data.name,
-      progress: data.progress,
-      expDuration: data.expDuration ? new Date(data.expDuration) : undefined 
+    name: data.name,
+    progress: data.progress,
+    expDuration: data.expDuration ? new Date(data.expDuration) : undefined,
   };
 
   return await substageModel.updateSubstage({ id, data: updateData });
@@ -223,6 +224,6 @@ export const updateSubstage = async ({ id, data }) => {
 export const deleteSubstageById = async (id) => {
   const existing = await substageModel.getSubstageById({ id });
   if (!existing) throw new Error("Substage not found");
-  
+
   return await substageModel.deleteFullSubstage({ id });
 };
