@@ -21,3 +21,11 @@ export const createBudget = async ({ data }) => {
     },
   });
 };
+
+export const getAllBudgetsByWorkId = async ({ id }) => {
+  return await prisma.budget.findMany({
+    where: {
+      id_work: id,
+    },
+  });
+};

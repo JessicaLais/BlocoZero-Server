@@ -10,3 +10,13 @@ export const createBudget = async (req, res) => {
     return res.status(400).json({ error: error.message });
   }
 };
+
+export const getAllBudgetsByWorkId = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const budgets = await budgetService.getAllBudgetsByWorkId({ id });
+    res.status(200).json({ budgets });
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+};

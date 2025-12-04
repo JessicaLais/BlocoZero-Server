@@ -6,4 +6,6 @@ const router = express.Router();
 
 router.post("/register", verifyBody, budgetController.createBudget);
 
+router.get("/list/:id", budgetController.getAllBudgetsByWorkId);
+
 export default router;

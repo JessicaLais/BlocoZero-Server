@@ -29,3 +29,12 @@ export const createBudgetWorked = async ({ data }) => {
   const budget = new Budget(data);
   return await budgetModel.createBudget({ data });
 };
+
+export const getAllBudgetsByWorkId = async ({ id }) => {
+  id = Number(id);
+  const searchWorkById = await getWorkById({ id });
+
+  const getAllBudgets = await budgetModel.getAllBudgetsByWorkId({ id });
+
+  return getAllBudgets.map((budget) => new Budget(budget));
+};
