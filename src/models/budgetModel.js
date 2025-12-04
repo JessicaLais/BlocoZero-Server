@@ -27,5 +27,11 @@ export const getAllBudgetsByWorkId = async ({ id }) => {
     where: {
       id_work: id,
     },
+    include: {
+      type: true,
+      category: true,
+      stage: true,
+      substage: true,
+    },
   });
 };

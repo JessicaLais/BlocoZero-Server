@@ -36,5 +36,6 @@ export const getAllBudgetsByWorkId = async ({ id }) => {
 
   const getAllBudgets = await budgetModel.getAllBudgetsByWorkId({ id });
 
-  return getAllBudgets.map((budget) => new Budget(budget));
+  return getAllBudgets;
+  //return getAllBudgets.map((budget) => new Budget(budget));
 };
