@@ -10,7 +10,8 @@ import stageRouter from "./src/routes/stageRouter.js";
 import substage from "./src/routes/substageRouter.js";
 import stockRouter from "./src/routes/stockRouter.js";
 import physicalScheduleRouter from "./src/routes/scheduleRouter.js";
-import financialphysicalRouter from "./src/routes/financialphysicalRouter.js"
+import financialphysicalRouter from "./src/routes/financialphysicalRouter.js";
+import progressReport from "./src/routes/progressReportRouter.js";
 import cors from "cors";
 import * as middlewares from "./src/middlewares/verifyMiddlewares.js";
 
@@ -36,6 +37,8 @@ app.use("/substage", substage);
 app.use("/stock", stockRouter);
 app.use("/physicalSchedule", physicalScheduleRouter);
 app.use("/financialphysical", financialphysicalRouter);
+app.use("/progressReport", progressReport);
+
 app.use((req, res) => {
   middlewares.verifyRoutes(req, res);
 });

@@ -8,6 +8,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/* ============================================================
+                        ENTERPRISE
+============================================================ */
+
 model Enterprise {
   id_entreprise Int      @id @default(autoincrement())
   name          String
@@ -21,6 +25,10 @@ model Enterprise {
   users User[]
   works Work[]
 }
+
+/* ============================================================
+                           USER
+============================================================ */
 
 model User {
   id_user          Int      @id @default(autoincrement())
@@ -40,7 +48,14 @@ model User {
   progressReports  ProgressReport[]
   budgetReports    BudgetReport[]
   substageEmployes SubstageEmploye[]
+
+  // 🔵 RELAÇÃO ADICIONADA
+  progressSubstageReports ProgressSubstageReport[]
 }
+
+/* ============================================================
+                           WORK
+============================================================ */
 
 model Work {
   id_work          Int      @id @default(autoincrement())
@@ -67,8 +82,15 @@ model Work {
   progressReports   ProgressReport[]
   workStages        WorkStage[]
   types             Type[]
-  stocks            Stock[] 
+  stocks            Stock[]
+
+  // 🔵 RELAÇÃO ADICIONADA
+  progressSubstageReports ProgressSubstageReport[]
 }
+
+/* ============================================================
+                            STAGE
+============================================================ */
 
 model Stage {
   id_stage          Int      @id @default(autoincrement())
@@ -85,11 +107,15 @@ model Stage {
   budgetReports      BudgetReport[]
   workStages         WorkStage[]
   stageSubstages     StageSubstage[]
-
-  // 🔵 NOVO:
   budgets            Budget[]
+
+  // 🔵 RELAÇÃO ADICIONADA
+  progressSubstageReports ProgressSubstageReport[]
 }
 
+/* ============================================================
+                          SUBSTAGE
+============================================================ */
 
 model Substage {
   id_substage       Int      @id @default(autoincrement())
@@ -105,19 +131,21 @@ model Substage {
   substageSchedules SubstageSchedule[]
   financialSchedules FinancialSchedule[]
   substageCategoryTypes SubstageCategoryType[]
-
-  // 🔵 NOVO:
   budgets Budget[]
+
+  // 🔵 RELAÇÃO ADICIONADA
+  progressSubstageReports ProgressSubstageReport[]
 }
 
+/* ============================================================
+                           BUDGET
+============================================================ */
 
 model Budget {
   id_budget         Int      @id @default(autoincrement())
   id_work           Int
   id_category       Int
   id_type           Int
-  
-  // 🔵 NOVO: Relacionar Budget com Stage e Substage
   id_stage          Int?
   id_substage       Int?
 
@@ -137,12 +165,13 @@ model Budget {
   work     Work     @relation(fields: [id_work], references: [id_work])
   category Category @relation(fields: [id_category], references: [id_category])
   type     Type     @relation(fields: [id_type], references: [id_type])
-
-  // 🔵 NOVO: Relações diretas
   stage    Stage?    @relation(fields: [id_stage], references: [id_stage])
   substage Substage? @relation(fields: [id_substage], references: [id_substage])
 }
 
+/* ============================================================
+                    PHYSICAL SCHEDULE
+============================================================ */
 
 model PhysicalSchedule {
   id_physicalSchedule Int @id @default(autoincrement())
@@ -154,6 +183,10 @@ model PhysicalSchedule {
   financialSchedules FinancialSchedule[]
   substageSchedules  SubstageSchedule[]
 }
+
+/* ============================================================
+                    FINANCIAL SCHEDULE
+============================================================ */
 
 model FinancialSchedule {
   id_financialSchedule Int @id @default(autoincrement())
@@ -171,6 +204,10 @@ model FinancialSchedule {
   substage         Substage?        @relation(fields: [id_substage], references: [id_substage])
 }
 
+/* ============================================================
+                     EQUIPMENT REQUEST
+============================================================ */
+
 model EquipmentRequest {
   id_equipmentRequest Int @id @default(autoincrement())
   id_type      Int
@@ -182,13 +219,16 @@ model EquipmentRequest {
   category Category @relation(fields: [id_category], references: [id_category])
 }
 
+/* ============================================================
+                            TYPE
+============================================================ */
+
 model Type {
   id_type     Int @id @default(autoincrement())
   name        String
   work_id     Int
 
   work        Work @relation(fields: [work_id], references: [id_work])
-
   categories           Category[]
   budgets              Budget[]
   equipmentRequests    EquipmentRequest[]
@@ -196,6 +236,10 @@ model Type {
   budgetReports        BudgetReport[]
   substageCategoryTypes SubstageCategoryType[]
 }
+
+/* ============================================================
+                       PROGRESS REPORT
+============================================================ */
 
 model ProgressReport {
   id_progressReport Int      @id @default(autoincrement())
@@ -214,6 +258,10 @@ model ProgressReport {
   user User   @relation(fields: [id_user], references: [id_user])
   stage Stage @relation(fields: [id_stage], references: [id_stage])
 }
+
+/* ============================================================
+                       BUDGET REPORT
+============================================================ */
 
 model BudgetReport {
   id_budgetReport      Int      @id @default(autoincrement())
@@ -235,16 +283,20 @@ model BudgetReport {
   stage Stage @relation(fields: [id_stage], references: [id_stage])
 }
 
+/* ============================================================
+                           STOCK
+============================================================ */
+
 model Stock {
   id_stock             Int      @id @default(autoincrement())
   id_type              Int
   id_category          Int
-  id_work              Int       // <--- ADICIONADO AQUI
+  id_work              Int
   code                 String
   name                 String
   unitMeasure          String
-  costUnit             Float? 
-  costTotal            Float?                
+  costUnit             Float?
+  costTotal            Float?
   stockQuantity        Int
   weightLength         Float
   recentInflow         Int
@@ -258,12 +310,15 @@ model Stock {
 
   type           Type      @relation(fields: [id_type], references: [id_type])
   category       Category  @relation(fields: [id_category], references: [id_category])
-  work           Work      @relation(fields: [id_work], references: [id_work]) // <--- RELAÇÃO ADICIONADA
+  work           Work      @relation(fields: [id_work], references: [id_work])
 
   materialUsages MaterialUsage[]
   substageStocks SubstageStock[]
 }
 
+/* ============================================================
+                     MATERIAL USAGE
+============================================================ */
 
 model MaterialUsage {
   id_materialUsage Int      @id @default(autoincrement())
@@ -276,6 +331,10 @@ model MaterialUsage {
 
   stock Stock @relation(fields: [id_stock], references: [id_stock])
 }
+
+/* ============================================================
+                          CATEGORY
+============================================================ */
 
 model Category {
   id_category Int @id @default(autoincrement())
@@ -290,6 +349,10 @@ model Category {
   substageCategoryTypes SubstageCategoryType[]
 }
 
+/* ============================================================
+                         WORK STAGE
+============================================================ */
+
 model WorkStage {
   workId    Int @map("id_work")
   stageId   Int @map("id_stage")
@@ -303,6 +366,10 @@ model WorkStage {
   @@map("work_stage")
 }
 
+/* ============================================================
+                       STAGE SUBSTAGE
+============================================================ */
+
 model StageSubstage {
   stageId    Int @map("id_stage")
   substageId Int @map("id_substage")
@@ -313,6 +380,10 @@ model StageSubstage {
   @@id([stageId, substageId])
   @@map("stage_substage")
 }
+
+/* ============================================================
+                     SUBSTAGE EMPLOYE
+============================================================ */
 
 model SubstageEmploye {
   substageId Int @map("id_substage")
@@ -328,6 +399,10 @@ model SubstageEmploye {
   @@map("substage_employes")
 }
 
+/* ============================================================
+                       SUBSTAGE STOCK
+============================================================ */
+
 model SubstageStock {
   substageId      Int @map("id_substage")
   materialStockId Int @map("id_stock")
@@ -340,6 +415,10 @@ model SubstageStock {
   @@map("substage_stock")
 }
 
+/* ============================================================
+                     SUBSTAGE SCHEDULE
+============================================================ */
+
 model SubstageSchedule {
   id_substageSchedule Int       @id @default(autoincrement())
   id_substage         Int
@@ -348,7 +427,6 @@ model SubstageSchedule {
   expDuration  Float
   expStartDate DateTime
   expEndDate   DateTime
-
   exeStartDate DateTime?
   exeEndDate   DateTime?
   progress     Float     @default(0.0)
@@ -358,6 +436,10 @@ model SubstageSchedule {
 
   @@map("substage_schedule")
 }
+
+/* ============================================================
+                  SUBSTAGE CATEGORY TYPE
+============================================================ */
 
 model SubstageCategoryType {
   substageId  Int @map("id_substage")
@@ -370,4 +452,34 @@ model SubstageCategoryType {
 
   @@id([substageId, categoryId, typeId])
   @@map("substage_category_type")
+}
+
+/* ============================================================
+               PROGRESS SUBSTAGE REPORT (NOVO)
+============================================================ */
+
+model ProgressSubstageReport {
+  id_progressSubstageReport Int      @id @default(autoincrement())
+
+  id_work     Int
+  id_user     Int
+  id_stage    Int
+  id_substage Int
+
+  startDate   DateTime
+  endDate     DateTime?
+  weather     String
+  completionPercentage Float
+  photo       Bytes?
+  notes       String?
+  status      String
+  managerRejectionReason String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  work     Work     @relation(fields: [id_work], references: [id_work])
+  user     User     @relation(fields: [id_user], references: [id_user])
+  stage    Stage    @relation(fields: [id_stage], references: [id_stage])
+  substage Substage @relation(fields: [id_substage], references: [id_substage])
 }
