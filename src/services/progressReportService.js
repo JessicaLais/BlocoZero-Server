@@ -32,3 +32,24 @@ export const listAllProgressReportByWorkId = async ({ id }) => {
 
   return getAllProgressReport;
 };
+export const updateReportByEmployee = async ({ id_report, id_user, data, photo }) => {
+  await getUserId({ user_id: Number(id_user) });
+  return await progressReportModel.updateReportByCreator({
+    id_report,
+    id_user,
+    data,
+    photo
+  });
+};
+
+export const managerReviewReport = async ({ id_report, status, reason }) => {
+  if (status === 'INVALIDO' && (!reason || reason.trim() === "")) {
+    throw new Error("Para invalidar um relatório, é obrigatório informar o motivo.");
+  }
+
+  return await progressReportModel.updateReportStatusByManager({
+    id_report,
+    status,
+    rejectionReason: reason
+  });
+};

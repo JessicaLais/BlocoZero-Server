@@ -43,3 +43,17 @@ export default class Item {
     }
   };
 }
+export class ReviewAction {
+  constructor({ status, reason }) {
+    this.status = status;
+    this.reason = reason;
+  }
+  validate() {
+    if (!['PENDENTE', 'APROVADO', 'INVALIDO'].includes(this.status)) {
+      throw new Error("Status inválido");
+    }
+    if (this.status === 'INVALIDO' && !this.reason) {
+      throw new Error("Motivo é obrigatório para rejeição");
+    }
+  }
+}

@@ -14,4 +14,15 @@ router.post(
 
 router.get("/list/:id", progressReportController.listAllProgressReportByWorkId);
 
+router.put(
+  "/update/:id", 
+  upload.single("photo"), 
+  progressReportController.updateReportEmployee
+);
+
+router.patch(
+  "/review/:id", 
+  progressReportController.reviewReportManager
+);
+
 export default router;

@@ -44,3 +44,43 @@ export const listAllProgressReportByWorkId = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
+export const updateReportEmployee = async (req, res) => {
+  let file = req.file;
+  try {
+    const { id } = req.params;
+    const data = req.body;
+    let photoBuffer = null;
+    if (file) {
+      photoBuffer = fs.readFileSync(file.path);
+    }
+    const updatedReport = await progressReportService.updateReportByEmployee({
+      id_report: id,
+      id_user: data.id_user,
+      data: data,
+      photo: photoBuffer
+    });
+    if (file) {
+      fs.unlinkSync(file.path);
+    }
+    res.status(200).json({ message: "Relatório atualizado com sucesso", updatedReport });
+  } catch (err) {
+    if (file && fs.existsSync(file.path)) {
+      fs.unlinkSync(file.path);
+    }
+    res.status(400).json({ error: err.message });
+  }
+};
+export const reviewReportManager = async (req, res) => {
+  try {
+    const { id } = req.params; 
+    const { status, reason } = req.body;
+    const result = await progressReportService.managerReviewReport({
+      id_report: id,
+      status: status,
+      reason: reason
+    });
+    res.status(200).json({ message: "Avaliação registrada com sucesso", result });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
