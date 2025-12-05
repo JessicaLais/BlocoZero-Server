@@ -18,3 +18,11 @@ export const createNewProgressReport = async ({ data, photo }) => {
     },
   });
 };
+
+export const listAllProgressReportByWorkId = async ({ id }) => {
+  return await prisma.progressSubstageReport.findMany({
+    where: {
+      id_work: id,
+    },
+  });
+};

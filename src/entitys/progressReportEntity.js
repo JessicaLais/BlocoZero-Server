@@ -1,6 +1,6 @@
 export default class Item {
   constructor({
-    id,
+    id_progressSubstageReport,
     id_work,
     id_user,
     id_stage,
@@ -12,8 +12,9 @@ export default class Item {
     notes,
     status,
     managerRejectionReason,
+    photo,
   }) {
-    this.id = id || null;
+    this.id_progressSubstageReport = id_progressSubstageReport || null;
     (this.id_work = Number(id_work)), (this.id_user = Number(id_user));
     this.id_stage = Number(id_stage);
     this.id_substage = Number(id_substage);

@@ -12,4 +12,6 @@ router.post(
   progressReportController.createNewProgressReport
 );
 
+router.get("/list/:id", progressReportController.listAllProgressReportByWorkId);
+
 export default router;

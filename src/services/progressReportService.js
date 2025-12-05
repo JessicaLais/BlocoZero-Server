@@ -22,3 +22,13 @@ export const createNewProgressReport = async ({ data, photo }) => {
     photo,
   });
 };
+
+export const listAllProgressReportByWorkId = async ({ id }) => {
+  id = Number(id);
+  await getWorkById({ id });
+
+  const getAllProgressReport =
+    await progressReportModel.listAllProgressReportByWorkId({ id });
+
+  return getAllProgressReport;
+};
