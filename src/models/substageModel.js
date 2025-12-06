@@ -130,20 +130,14 @@ export const updateSubstage = async ({ data, id }) => {
 export const deleteFullSubstage = async ({ id }) => {
   const idSubstage = Number(id);
   return await prisma.$transaction([
-    prisma.substageSchedule.deleteMany({
-      where: { id_substage: idSubstage } 
-    }),
-    prisma.stageSubstage.deleteMany({
-      where: { substageId: idSubstage } 
-    }),
-    prisma.substageEmploye.deleteMany({
-      where: { substageId: idSubstage } 
-    }),
-    prisma.substageStock.deleteMany({
-      where: { substageId: idSubstage } 
-    }),
-    prisma.substage.delete({
-      where: { id_substage: idSubstage },
-    })
+    prisma.substageSchedule.deleteMany({ where: { id_substage: idSubstage } }),
+    prisma.stageSubstage.deleteMany({ where: { substageId: idSubstage } }),
+    prisma.substageEmploye.deleteMany({ where: { substageId: idSubstage } }),
+    prisma.substageStock.deleteMany({ where: { substageId: idSubstage } }),
+    prisma.budget.deleteMany({ where: { id_substage: idSubstage } }),
+    prisma.financialSchedule.deleteMany({ where: { id_substage: idSubstage } }),
+    prisma.substageCategoryType.deleteMany({ where: { substageId: idSubstage } }),
+    prisma.progressSubstageReport.deleteMany({ where: { id_substage: idSubstage } }),
+    prisma.substage.delete({ where: { id_substage: idSubstage } }),
   ]);
 };

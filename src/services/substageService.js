@@ -222,8 +222,11 @@ export const updateSubstage = async ({ id, data }) => {
 };
 
 export const deleteSubstageById = async (id) => {
+ id = Number(id)
   const existing = await substageModel.getSubstageById({ id });
   if (!existing) throw new Error("Substage not found");
+  
+
 
   return await substageModel.deleteFullSubstage({ id });
 };
