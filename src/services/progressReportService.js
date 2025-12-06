@@ -42,14 +42,20 @@ export const updateReportByEmployee = async ({ id_report, id_user, data, photo }
   });
 };
 
-export const managerReviewReport = async ({ id_report, status, reason }) => {
-  if (status === 'INVALIDO' && (!reason || reason.trim() === "")) {
-    throw new Error("Para invalidar um relatório, é obrigatório informar o motivo.");
+export const managerReviewReport = async ({ id, data }) => {
+  id = Number(id);
+  const searchPprogressReport = await progressReportModel.searchProgressReportByid({ id });
+  console.log(searchPprogressReport);
+
+  if (!searchPprogressReport || searchPprogressReport.length === 0) {
+    throw new Error("Progress Report not found");
   }
 
-  return await progressReportModel.updateReportStatusByManager({
-    id_report,
-    status,
-    rejectionReason: reason
-  });
+   if(data.status === "invalid" && !data.managerRejectionReason){
+    throw new Error("Reason of Manager is required");
+  }
+
+
+ 
+  return await progressReportModel.insertReasonByManager({ id, data });
 };

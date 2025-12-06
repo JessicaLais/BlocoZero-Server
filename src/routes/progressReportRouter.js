@@ -20,7 +20,7 @@ router.put(
   progressReportController.updateReportEmployee
 );
 
-router.patch(
+router.put(
   "/review/:id", 
   progressReportController.reviewReportManager
 );

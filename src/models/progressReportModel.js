@@ -43,19 +43,22 @@ export const updateReportByEmployee = async ({ id_report, id_user, data, photo }
   });
 };
 
-export const updateReportStatusByManager = async ({ id_report, data }) => {
-  const validStatuses = ['PENDENTE', 'APROVADO', 'INVALIDO'];
-  if (!validStatuses.includes(data.status)) {
-    throw new Error("Status inválido. Use: PENDENTE, APROVADO ou INVALIDO");
-  }
+export const searchProgressReportByid = async ({id}) => {
+  return await prisma.progressSubstageReport.findMany({
+    where:{
+      id_progressSubstageReport:id
+    }
+  })
+}
 
+export const insertReasonByManager = async ({id, data}) =>{
   return await prisma.progressSubstageReport.update({
-    where: {
-      id_progressSubstageReport: id_report,
+    where:{
+      id_progressSubstageReport: id
     },
-    data: {
+    data:{
       status: data.status,
-      managerRejectionReason: data.status === 'INVALIDO' ? data.managerRejectionReason : null,
-    },
-  });
-};
+      managerRejectionReason: data.managerRejectionReason || ""
+    }
+  })
+}

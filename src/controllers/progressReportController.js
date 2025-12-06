@@ -72,14 +72,11 @@ export const updateReportEmployee = async (req, res) => {
 };
 export const reviewReportManager = async (req, res) => {
   try {
-    const { id } = req.params; 
-    const { status, reason } = req.body;
-    const result = await progressReportService.managerReviewReport({
-      id_report: id,
-      status: status,
-      reason: reason
-    });
-    res.status(200).json({ message: "Avaliação registrada com sucesso", result });
+    const id = req.params.id
+    const data = req.body
+    
+    const result = await progressReportService.managerReviewReport({id, data});
+    res.status(200).json({ message: "Avaliação registrada com sucesso" });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
